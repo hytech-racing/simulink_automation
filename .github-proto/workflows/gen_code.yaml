@@ -1,0 +1,63 @@
+name: run gen code on matlab runner on dispatch from simulink repo
+on:
+  workflow_dispatch:  # Listen for manual or external triggers
+
+env:
+  MLM_LICENSE_TOKEN: ${{ secrets.MLM_LICENSE_TOKEN }} # Defined as a secret in GitHub config
+
+jobs:
+  my-job:
+    name: Run MATLAB Script
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up MATLAB
+        uses: matlab-actions/setup-matlab@v2
+        with:
+          release: R2024b
+          cache: true
+          products: |
+            Simulink
+            Signal_Processing_Toolbox
+            Simulink_Coder
+            Embedded_Coder
+            Phased_Array_System_Toolbox
+            Control_System_Toolbox
+
+      - name: Run script
+        uses: matlab-actions/run-command@v2
+        with:
+          command: addpath("Controllers", "Lateral Models", "Pacejka52", "Vehicle Math"), gen_code
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+      
+      - name: Run Python script
+        run: python process_simulink_codegen.py
+      
+      - name: Checkout CASE_lib repository
+        uses: actions/checkout@v4
+        with:
+          repository: hytech-racing/CASE_lib
+          token: ${{ secrets.BENS_PAT }}
+          path: CASE_lib_repo
+          ref: 'main'
+          
+      - name: remove old CASE_lib files and Copy new files to CASE_lib repository
+        run: |
+          rm -rf CASE_lib_repo/*
+          cp -r HT08_CASE/* CASE_lib_repo/
+          # cp param_adjust.h CASE_lib_repo/
+          # cp CASEParameters.json CASE_lib_repo/
+      
+      - name: Commit and push changes
+        run: |
+          cd CASE_lib_repo
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add .
+          git commit -m "Update library files"
+          git push
+          git tag -a "v${{ github.run_number }}" -m "Release version ${{ github.run_number }}"
+          git push origin "v${{ github.run_number }}"
