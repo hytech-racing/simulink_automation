@@ -41,7 +41,7 @@ jobs:
           path: HyTech_sim
           ref: 'main'
 
-      - name: remove old CASE_lib files and Copy new files to CASE_lib repository
+      - name: Copy source model files
         run: |
           mkdir source_models
           cp -r HyTech_sim/Vehicle Models/HT09 Vehicle Model/* source_models/
