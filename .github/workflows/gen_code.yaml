@@ -6,8 +6,8 @@ env:
   MLM_LICENSE_TOKEN: ${{ secrets.MLM_LICENSE_TOKEN }} # Defined as a secret in GitHub config
 
 jobs:
-  my-job:
-    name: Run MATLAB Script
+  create-artifact:
+    name: Generate source code from simulink models and create artifact
     runs-on: ubuntu-latest
     steps:
       - name: Set up MATLAB
@@ -33,31 +33,26 @@ jobs:
         with:
           python-version: '3.x'
       
-      - name: Run Python script
-        run: python process_simulink_codegen.py
-      
-      - name: Checkout CASE_lib repository
+      - name: Checkout the HyTech_sim repo
         uses: actions/checkout@v4
         with:
-          repository: hytech-racing/CASE_lib
+          repository: hytech-racing/HyTech_sim
           token: ${{ secrets.BENS_PAT }}
-          path: CASE_lib_repo
+          path: HyTech_sim
           ref: 'main'
-          
+
       - name: remove old CASE_lib files and Copy new files to CASE_lib repository
         run: |
-          rm -rf CASE_lib_repo/*
-          cp -r HT08_CASE/* CASE_lib_repo/
-          # cp param_adjust.h CASE_lib_repo/
-          # cp CASEParameters.json CASE_lib_repo/
+          mkdir source_models
+          cp -r HyTech_sim/Vehicle Models/HT09 Vehicle Model/* source_models/
       
-      - name: Commit and push changes
+      - name: Run Python script
         run: |
-          cd CASE_lib_repo
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add .
-          git commit -m "Update library files"
-          git push
-          git tag -a "v${{ github.run_number }}" -m "Release version ${{ github.run_number }}"
-          git push origin "v${{ github.run_number }}"
+          mkdir source_code
+          python process_simulink_codegen.py source_code
+        
+      - name: Upload artifacts
+        uses: actions/upload-artifact@master
+        with: 
+          name: dist
+          path: source_code/

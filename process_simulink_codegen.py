@@ -126,7 +126,7 @@ def generate_cmakelists(libraries, output_dir):
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print("Usage: python script.py <output_directory>")
+        print("Usage: python process_simulink_codegen.py <output_directory>")
         sys.exit(1)
 
     output_directory = sys.argv[1]
