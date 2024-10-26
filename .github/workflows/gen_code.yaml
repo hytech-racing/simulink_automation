@@ -57,15 +57,13 @@ jobs:
           mkdir source_code
           python process_simulink_codegen.py source_code
 
-      - name: Build artifact
+      - name: Create release artifact
         run: | 
-          mkdir build
-          tar -czvf build/mathlab_models.tar.gz source_code
-          ls
-          pwd
-        
-      - name: Upload artifacts
-        uses: actions/upload-artifact@master
-        with: 
-          name: dist
-          path: build/*
+          tar -czvf mathlab_models.tar.gz source_code
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.date.outputs.date }}
+          files: |
+            mathlab_models.tar.gz
