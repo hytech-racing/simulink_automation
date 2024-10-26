@@ -10,6 +10,9 @@ jobs:
     name: Generate source code from simulink models and create artifact
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Set up MATLAB
         uses: matlab-actions/setup-matlab@v2
         with:
@@ -36,10 +39,8 @@ jobs:
           path: HyTech_sim
           ref: 'main'
 
-      - name: Copy HyTech_sim to source
+      - name: Debugging
         run: |
-          mkdir source
-          cp -r HyTech_sim/* source/
           ls
 
       - name: Run matlab script
