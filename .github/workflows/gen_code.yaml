@@ -61,6 +61,8 @@ jobs:
         run: | 
           mkdir build
           tar -czvf mathlab_models.tar.gz source_code build
+          ls
+          pwd
         
       - name: Upload artifacts
         uses: actions/upload-artifact@master
