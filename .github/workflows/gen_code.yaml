@@ -60,7 +60,7 @@ jobs:
       - name: Build artifact
         run: | 
           mkdir build
-          tar -czvf mathlab_models.tar.gz source_code build
+          tar -czvf build/mathlab_models.tar.gz source_code
           ls
           pwd
         
@@ -68,4 +68,4 @@ jobs:
         uses: actions/upload-artifact@master
         with: 
           name: dist
-          path: build/
+          path: build/*
