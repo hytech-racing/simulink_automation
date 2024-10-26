@@ -22,11 +22,6 @@ jobs:
             Embedded_Coder
             Phased_Array_System_Toolbox
             Control_System_Toolbox
-
-      - name: Run script
-        uses: matlab-actions/run-command@v2
-        with:
-          command: addpath("Controllers", "Lateral Models", "Pacejka52", "Vehicle Math"), gen_code
       
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -41,10 +36,15 @@ jobs:
           path: HyTech_sim
           ref: 'main'
 
-      - name: Copy source model files
+      - name: Copy HyTech_sim to source
         run: |
-          mkdir source_models
-          cp -r HyTech_sim/Vehicle Models/HT09 Vehicle Model/* source_models/
+          mkdir source
+          cp -r HyTech_sim/* source/
+
+      - name: Run matlab script
+        uses: matlab-actions/run-command@v2
+        with:
+          command: gencode_v2.m
       
       - name: Run Python script
         run: |
