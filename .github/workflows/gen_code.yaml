@@ -40,19 +40,25 @@ jobs:
         run: |
           mkdir source
           cp -r HyTech_sim/* source/
+          ls
 
       - name: Run matlab script
         uses: matlab-actions/run-command@v2
         with:
-          command: gencode_v2.m
+          command: gencode_v2
       
       - name: Run Python script
         run: |
           mkdir source_code
           python process_simulink_codegen.py source_code
+
+      - name: Build artifact
+        run: | 
+          mkdir build
+          tar -czvf mathlab_models.tar.gz source_code build
         
       - name: Upload artifacts
         uses: actions/upload-artifact@master
         with: 
           name: dist
-          path: source_code/
+          path: build/mathlab_models/
