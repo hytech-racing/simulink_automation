@@ -3,7 +3,7 @@ on:
   push  # TODO change this after it works to workflow_dispatch
 
 env:
-  MLM_LICENSE_TOKEN: ${{ secrets.MLM_LICENSE_TOKEN }} # Defined as a secret in GitHub configuration
+  MLM_LICENSE_TOKEN: ${{ secrets.MLM_LICENSE_TOKEN }} # Defined as a secret in GitHub conf
 
 jobs:
   create-artifact:
