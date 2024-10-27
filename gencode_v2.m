@@ -4,7 +4,7 @@ addpath(genpath(rootFolder));  % Add all sub-folders
 
 HT09_Vehicle_Parameters;
 
-modelList = {'matlab_math'}; 
+modelList = {'Tire_Model_Codegen'}; 
 close all;
 
 % Cell array to store the generated zip file names
