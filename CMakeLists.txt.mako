@@ -62,17 +62,14 @@ install(FILES
 </%text>
 
 # State estimation header library
-<%
-def format_libs(sources):
-    result = ""
-    for lib in libraries: 
-      result += " ".join(lib['name'])
-    return result
-%>
+
 add_library(State_Estimation INTERFACE)
 
 target_include_directories(State_Estimation INTERFACE State_Estimation/include/)
 
 target_link_libraries(State_Estimation INTERFACE 
-    ${format_libs(libraries)})
+    % for library in libraries: 
+    ${library['name']}
+    %endfor)
+
 
