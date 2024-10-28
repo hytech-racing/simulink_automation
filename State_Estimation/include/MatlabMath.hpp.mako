@@ -26,16 +26,21 @@ namespace estimation
             }
             
             % for library in libraries:
-            ${library['name']}::ExtY_${library['name']}_T evaluate_${library['name']}_estimator(model_inputs &inputs, model_parameters &parameters) {
+            ${library['name']}::ExtY_${library['name']}_T evaluate_${library['name']}_estimator(model_inputs &inputs) {
                 update_inputs(inputs, parameters);
-                
+
+                ${library['name']}_model.setExternalInputs(&_inputs);
+                ${library['name']}_model.step();
+                ${library['name']}::ExtY_${library['name']}_T outputs = ${library['name']}_model.getExternalOutputs();
+
+                return outputs;
             };
             % endfor
 
         private:
             % for library in libraries: 
             ${library['name']}::ExtU_${library['name']} _inputs;
-            ${library['name']} _model;
+            ${library['name']} ${library['name']}_model;
             % endfor
 
             % for input in minputs: 

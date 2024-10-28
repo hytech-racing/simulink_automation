@@ -7,40 +7,11 @@ set(CMAKE_INCLUDE_HEADERS_IN_COMPILE_COMMANDS ON)
 
 include(GNUInstallDirs)
 
-<%!
-def format_sources(sources):
-    return " ".join(sources)
-%>
+
 
 # Loop over libraries to create shared libraries and set up install rules
-% for library in libraries:
-add_library(${library['name']} SHARED
-    ${format_sources(library['sources'])}
-)
-
-target_include_directories(${library['name']} PUBLIC
-    <%text>$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/</%text>${library['name']}/include>
-    <%text>$<INSTALL_INTERFACE</%text>:${library['name']}/include>
-)
 
 
-install(
-    TARGETS ${library['name']}
-<%text>    EXPORT codegenTargets
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-</%text>
-)
-
-install(
-    DIRECTORY ${library['name']}/include/
-    DESTINATION ${library['name']}/include
-)
-
-% endfor
-
-<%text>
 # Install target export
 install(EXPORT codegenTargets
   FILE codegenTargets.cmake
@@ -59,20 +30,14 @@ install(FILES
   "${CMAKE_CURRENT_BINARY_DIR}/codegenConfig.cmake"
   DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/codegen
 )
-</%text>
+
 
 # State estimation header library
-<%
-def format_libs(sources):
-    result = ""
-    for lib in libraries: 
-      result += " ".join(lib['name'])
-    return result
-%>
+
 add_library(State_Estimation INTERFACE)
 
 target_include_directories(State_Estimation INTERFACE State_Estimation/include/)
 
 target_link_libraries(State_Estimation INTERFACE 
-    ${format_libs(libraries)})
+    )
 
