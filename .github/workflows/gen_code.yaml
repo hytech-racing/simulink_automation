@@ -1,6 +1,6 @@
 name: run gen code on matlab runner on dispatch from simulink repo
 on:
-  [ repository_dispatch workflow_dispatch ]
+  workflow_dispatch
 
 env:
   MLM_LICENSE_TOKEN: ${{ secrets.MLM_LICENSE_TOKEN }} # Defined as a secret in GitHub conf
