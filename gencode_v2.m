@@ -20,7 +20,16 @@ for i = 1:length(modelList)
     
     % Build the model
     slbuild(modelName)
+    codeInfoPath = fullfile(pwd, [modelName, '_ert_rtw', filesep, 'codeInfo.mat']); % Adjust the path as needed
+
+    if exist(codeInfoPath, 'file')
+        codeInfo = load(codeInfoPath);
+        disp('codeInfo.mat loaded successfully.');
     
+        % Display the contents of codeInfo for verification
+        disp(codeInfo);
+    end
+    res = associateInportWithStructMemberNames(codeInfo.codeInfo, areas)
     % Close the system to free memory
     close_system(modelName, 0);
 
