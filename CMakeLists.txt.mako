@@ -7,12 +7,15 @@ set(CMAKE_INCLUDE_HEADERS_IN_COMPILE_COMMANDS ON)
 
 include(GNUInstallDirs)
 
+<%!
+def format_sources(sources):
+    return " ".join(sources)
+%>
+
 # Loop over libraries to create shared libraries and set up install rules
 % for library in libraries:
 add_library(${library['name']} SHARED
-    % for source in library['sources']:
-    ${source}
-    % endfor
+    ${format_sources(library['sources'])}
 )
 
 target_include_directories(${library['name']} PUBLIC
