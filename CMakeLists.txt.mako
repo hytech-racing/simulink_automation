@@ -7,15 +7,12 @@ set(CMAKE_INCLUDE_HEADERS_IN_COMPILE_COMMANDS ON)
 
 include(GNUInstallDirs)
 
-<%!
-def format_sources(sources):
-    return " ".join(sources)
-%>
-
 # Loop over libraries to create shared libraries and set up install rules
 % for library in libraries:
 add_library(${library['name']} SHARED
-    ${format_sources(library['sources'])}
+    % for source in library['sources']:
+    ${source}
+    % endfor
 )
 
 target_include_directories(${library['name']} PUBLIC
@@ -62,13 +59,32 @@ install(FILES
 </%text>
 
 # State estimation header library
-add_library(State_Estimation INTERFACE)
+add_library(matlab_model INTERFACE)
 
-target_include_directories(State_Estimation INTERFACE State_Estimation/include/)
+target_include_directories(matlab_model INTERFACE 
+    <%text>$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/</%text>${library['name']}/include>
+    <%text>$<INSTALL_INTERFACE</%text>:${library['name']}/include>
+)
 
-target_link_libraries(State_Estimation INTERFACE 
+target_link_libraries(matlab_model INTERFACE 
     % for library in libraries: 
     ${library['name']}
     %endfor
 )
+
+install(
+    TARGETS matlab_model
+    EXPORT matlab_modelTargets
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+
+)
+
+install(
+    DIRECTORY matlab_model/include/
+    DESTINATION matlab_model/include
+)
+
+
 

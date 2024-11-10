@@ -184,9 +184,9 @@ if __name__ == "__main__":
     copy_directory('cmake/', os.path.join(output_directory, 'cmake'))
 
     # Generate and move state estimation files
-    state_estimation_output = output_directory + "/State_Estimation"
+    state_estimation_output = output_directory + "/matlab_model"
     os.makedirs(state_estimation_output, exist_ok=True)
-    shutil.copy("State_Estimation/MatlabModel.hpp", state_estimation_output)
+    shutil.copy("matlab_model/MatlabModel.hpp", state_estimation_output)
     for file in files:
         # Use inport data to generate header and src matlab math
             inportInfoJsonName = file.strip(".zip") + "_inport_info.json"
