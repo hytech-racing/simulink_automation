@@ -12,7 +12,7 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        ref: 'feature/model_processing_addition'
+        ref: feature/model_processing_addition
 
       - name: Set up MATLAB
         uses: matlab-actions/setup-matlab@v2
