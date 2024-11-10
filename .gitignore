@@ -1,11 +1,5 @@
-HyTech_Sim/*
 HyTech_Sim
-.venv
 .venv/
-slprj
 slprg/
-model_processing
 model_processing/
-build
 build/
-test
