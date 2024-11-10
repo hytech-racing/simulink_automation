@@ -5,6 +5,8 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(CMAKE_INCLUDE_HEADERS_IN_COMPILE_COMMANDS ON)
 
+find_package(drivebrain_core REQUIRED)
+
 include(GNUInstallDirs)
 <%!
 def format_sources(sources):
@@ -35,16 +37,21 @@ install(
 % endfor
 
 # State estimation header library
-add_library(matlab_model STATIC)
+add_library(matlab_model SHARED
+% for library in libraries:
+    matlab_model/src/${library['name']}_MatlabModel.cpp
+% endfor
+)
 
-target_include_directories(matlab_model PUBLIC 
+target_include_directories(matlab_model SHARED 
   <%text>$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/</%text>matlab_model/include>
   <%text>$<INSTALL_INTERFACE</%text>:matlab_model/include>)
 
-target_link_libraries(matlab_model STATIC
+target_link_libraries(matlab_model SHARED
     % for library in libraries: 
     ${library['name']}
     %endfor
+    drivebrain::drivebrain_core
 )
 
 install(
