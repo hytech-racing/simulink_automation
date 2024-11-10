@@ -7,6 +7,12 @@ namespace estimation
 
         public:
 
+            struct inputs {
+                % for input in inputs:
+                float ${input};
+                % endfor
+            };
+
             ${model}_MatlabModel(bool &construction_failed);
 
             void handle_parameter_updates();
@@ -40,10 +46,5 @@ namespace estimation
                 % endfor
             };
 
-            struct inputs {
-                % for input in inputs:
-                float ${input};
-                % endfor
-            }
     }
 }
