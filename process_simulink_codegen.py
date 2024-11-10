@@ -141,7 +141,7 @@ def parse_inport_json(json_file):
 
 
 def generate_model_integration(model, parameters, inputs, output_dir):
-    template = Template(filename="State_Estimation/MatlabModelIntegration.hpp.mako")
+    template = Template(filename="matlab_model/MatlabModelIntegration.hpp.mako")
     rendered = template.render(model=model, parameters=parameters, inputs=inputs)
 
     integration_file_path = os.path.join(output_dir, model + '_MatlabModel.hpp')
@@ -184,7 +184,7 @@ if __name__ == "__main__":
     copy_directory('cmake/', os.path.join(output_directory, 'cmake'))
 
     # Generate and move state estimation files
-    state_estimation_output = output_directory + "/matlab_model"
+    state_estimation_output = output_directory + "/matlab_model/include"
     os.makedirs(state_estimation_output, exist_ok=True)
     shutil.copy("matlab_model/MatlabModel.hpp", state_estimation_output)
     for file in files:

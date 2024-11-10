@@ -6,12 +6,17 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(CMAKE_INCLUDE_HEADERS_IN_COMPILE_COMMANDS ON)
 
 include(GNUInstallDirs)
-
 <%!
 def format_sources(sources):
     return " ".join(sources)
 %>
-
+<%!
+def format_libraries(libraries):
+    library_names = []
+    for library in libraries:
+      library_names.append(library['name'])
+    return " ".join(library_names)
+%>
 # Loop over libraries to create shared libraries and set up install rules
 % for library in libraries:
 add_library(${library['name']} SHARED
@@ -23,22 +28,37 @@ target_include_directories(${library['name']} PUBLIC
     <%text>$<INSTALL_INTERFACE</%text>:${library['name']}/include>
 )
 
-
-install(
-    TARGETS ${library['name']}
-<%text>    EXPORT codegenTargets
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-</%text>
-)
-
 install(
     DIRECTORY ${library['name']}/include/
     DESTINATION ${library['name']}/include
 )
-
 % endfor
+
+# State estimation header library
+add_library(matlab_model STATIC)
+
+target_include_directories(matlab_model PUBLIC 
+  <%text>$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/</%text>matlab_model/include>
+  <%text>$<INSTALL_INTERFACE</%text>:matlab_model/include>)
+
+target_link_libraries(matlab_model STATIC
+    % for library in libraries: 
+    ${library['name']}
+    %endfor
+)
+
+install(
+    TARGETS ${format_libraries(libraries)} matlab_model
+<%text>    EXPORT codegenTargets
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}</%text>
+)
+
+install(
+    DIRECTORY matlab_model/include/
+    DESTINATION matlab_model/include
+)
 
 <%text>
 # Install target export
@@ -60,34 +80,4 @@ install(FILES
   DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/codegen
 )
 </%text>
-
-# State estimation header library
-add_library(matlab_model INTERFACE)
-
-target_include_directories(matlab_model INTERFACE 
-    <%text>$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/</%text>matlab_model/include>
-    <%text>$<INSTALL_INTERFACE</%text>:matlab_model/include>
-)
-
-target_link_libraries(matlab_model INTERFACE 
-    % for library in libraries: 
-    ${library['name']}
-    %endfor
-)
-
-install(
-    TARGETS matlab_model
-    EXPORT matlab_modelTargets
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-
-)
-
-install(
-    DIRECTORY matlab_model/include/
-    DESTINATION matlab_model/include
-)
-
-
 
