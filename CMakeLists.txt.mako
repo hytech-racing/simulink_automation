@@ -7,15 +7,12 @@ set(CMAKE_INCLUDE_HEADERS_IN_COMPILE_COMMANDS ON)
 
 include(GNUInstallDirs)
 
-<%!
-def format_sources(sources):
-    return " ".join(sources)
-%>
-
 # Loop over libraries to create shared libraries and set up install rules
 % for library in libraries:
 add_library(${library['name']} SHARED
-    ${format_sources(library['sources'])}
+    % for source in library['sources']
+    ${source}
+    % end for
 )
 
 target_include_directories(${library['name']} PUBLIC
@@ -65,8 +62,8 @@ install(FILES
 add_library(matlab_model INTERFACE)
 
 target_include_directories(matlab_model INTERFACE 
-    <%text>$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/</%text>${library['name']}/include>
-    <%text>$<INSTALL_INTERFACE</%text>:${library['name']}/include>
+    <%text>$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/</%text>matlab_model/include>
+    <%text>$<INSTALL_INTERFACE</%text>:matlab_model/include>
 )
 
 target_link_libraries(matlab_model INTERFACE 
