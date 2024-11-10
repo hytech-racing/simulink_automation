@@ -55,3 +55,13 @@ install(FILES
   DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/codegen
 )
 
+
+# State estimation header library
+add_library(State_Estimation INTERFACE)
+
+target_include_directories(State_Estimation INTERFACE State_Estimation/include/)
+
+target_link_libraries(State_Estimation INTERFACE 
+    Tire_Model_Codegen
+)
+

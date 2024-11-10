@@ -167,11 +167,6 @@ if __name__ == "__main__":
             remove_specific_files(extraction_path, ["ert_main.cpp", "CMakeLists.txt"])
             directories = list_directories(extraction_path)
             organize_files(extraction_path)  # Organize files into src and include folders
-
-            # Use inport data to generate header and src matlab math
-            inportInfoJsonName = file.strip(".zip") + "_inport_info.json"
-            inputs, parameters = parse_inport_json(inportInfoJsonName)
-            generate_model_integration(model=file.strip(".zip"), parameters=parameters, inputs=inputs, output_dir="test/")
             
             # Collect library information
             library_name = Path(file).stem  # Use the zip file name as library name
@@ -187,3 +182,13 @@ if __name__ == "__main__":
     # Generate the CMakeLists.txt with the collected libraries
     generate_cmakelists(libraries, output_directory)
     copy_directory('cmake/', os.path.join(output_directory, 'cmake'))
+
+    # Generate and move state estimation files
+    state_estimation_output = output_directory + "/State_Estimation"
+    os.makedirs(state_estimation_output, exist_ok=True)
+    shutil.copy("State_Estimation/MatlabModel.hpp", state_estimation_output)
+    for file in files:
+        # Use inport data to generate header and src matlab math
+            inportInfoJsonName = file.strip(".zip") + "_inport_info.json"
+            inputs, parameters = parse_inport_json(inportInfoJsonName)
+            generate_model_integration(model=file.strip(".zip"), parameters=parameters, inputs=inputs, output_dir=state_estimation_output)
