@@ -29,7 +29,32 @@ for i = 1:length(modelList)
         % Display the contents of codeInfo for verification
         disp(codeInfo);
     end
-    res = associateInportWithStructMemberNames(codeInfo.codeInfo, areas)
+
+    % Write inport information to zip file
+    areas = getInportAreas(modelName);
+    res = associateInportWithStructMemberNames(codeInfo.codeInfo, areas);
+
+    inportInfoJsonName = strcat(modelName, '_inport_info.json');
+    ifid = fopen(inportInfoJsonName, 'w');
+
+    if ifid == -1
+        error('Cannot create Inport Info JSON');
+    end
+
+    fprintf(ifid, '{\n');
+
+    for i=1:length(res)
+        if i == length(res)
+            fprintf(ifid, '   "%s": %d\n', res(i).member_name, res(i).is_input);
+        else 
+            fprintf(ifid, '   "%s": %d,\n', res(i).member_name, res(i).is_input);
+        end
+    end 
+    fprintf(ifid, '}\n');
+
+    fclose(ifid);
+
+
     % Close the system to free memory
     close_system(modelName, 0);
 

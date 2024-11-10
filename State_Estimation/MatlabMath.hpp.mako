@@ -7,9 +7,9 @@ namespace estimation
     {
         public:
 
-            % for input in model_inputs:
+            % for input in inputs:
             struct model_inputs {
-                ${input['type']} ${input['name']};
+                real_T ${input};
             }
             % endfor
             
@@ -21,11 +21,13 @@ namespace estimation
 
             MatlabMath(bool &construction_failed);
             bool init();
-            Tire_Model_Codegen::ExtY_Tire_Model_Codegen_T evaluate_estimator(model_inputs &inputs, model_parameters &parameters);
+            ${modelName}::ExtY_${modelName}_T evaluate_estimator(model_inputs &inputs, model_parameters &parameters);
+
+
 
         private:
-            Tire_Model_Codegen::ExtU_Tire_Model_Codegen_T _inputs;
-            Tire_Model_Codegen _model;
+            ${modelName}::ExtU_${modelName}_T _inputs;
+            ${modelName} _model;
         
     }
 }

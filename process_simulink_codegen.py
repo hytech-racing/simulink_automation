@@ -124,6 +124,30 @@ def generate_cmakelists(libraries, output_dir):
     
     print(f"CMakeLists.txt generated at '{cmake_file_path}'.")
 
+def parse_inport_json(json_file):
+    with open(json_file, 'r') as f:
+        inport_data = json.load(f)
+
+        inputs = []
+        parameters = []
+        
+        for inport in inport_data:
+            if (inport_data[inport]) == 0:
+                parameters.append(inport)
+            else:
+                inputs.append(inport)
+
+        return [inputs, parameters]
+
+
+def generate_model_integration(modelName, parameters, inputs, output_dir):
+    template = Template(filename='')
+    rendered = template.render(modelName=modelName, parameters=parameters, inputs=inputs)
+
+    integration_file_path = os.path.join(output_dir, modelName + '_MatlabMath.hpp')
+    with open(integration_file_path, 'w') as f:
+        f.write(rendered)
+
 if __name__ == "__main__":
     if len(sys.argv) < 2:
         print("Usage: python process_simulink_codegen.py <output_directory>")
@@ -141,6 +165,10 @@ if __name__ == "__main__":
             remove_specific_files(extraction_path, ["ert_main.cpp", "CMakeLists.txt"])
             directories = list_directories(extraction_path)
             organize_files(extraction_path)  # Organize files into src and include folders
+
+            # Use inport data to generate header and src matlab math
+            inportInfoJsonName = file.strip(".zip") + "_inport_info.json"
+            inputs, parameters = parse_inport_json(inportInfoJsonName)
             
             # Collect library information
             library_name = Path(file).stem  # Use the zip file name as library name
