@@ -140,13 +140,15 @@ def parse_inport_json(json_file):
         return [inputs, parameters]
 
 
-def generate_model_integration(modelName, parameters, inputs, output_dir):
-    template = Template(filename='')
-    rendered = template.render(modelName=modelName, parameters=parameters, inputs=inputs)
+def generate_model_integration(model, parameters, inputs, output_dir):
+    template = Template(filename="State_Estimation/MatlabModelIntegration.hpp.mako")
+    rendered = template.render(model=model, parameters=parameters, inputs=inputs)
 
-    integration_file_path = os.path.join(output_dir, modelName + '_MatlabMath.hpp')
+    integration_file_path = os.path.join(output_dir, model + '_MatlabModel.hpp')
     with open(integration_file_path, 'w') as f:
         f.write(rendered)
+
+    print(f"{model}_MatlabModel.hpp generated at '{integration_file_path}'.")
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
@@ -169,6 +171,7 @@ if __name__ == "__main__":
             # Use inport data to generate header and src matlab math
             inportInfoJsonName = file.strip(".zip") + "_inport_info.json"
             inputs, parameters = parse_inport_json(inportInfoJsonName)
+            generate_model_integration(model=file.strip(".zip"), parameters=parameters, inputs=inputs, output_dir="test/")
             
             # Collect library information
             library_name = Path(file).stem  # Use the zip file name as library name
