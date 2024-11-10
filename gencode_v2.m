@@ -44,10 +44,20 @@ for i = 1:length(modelList)
     fprintf(ifid, '{\n');
 
     for i=1:length(res)
+
+        id = 0;
+        if res(i).is_input
+            id = 1;
+        end
+
+        if res(i).is_bool
+            id = 2;
+        end
+
         if i == length(res)
-            fprintf(ifid, '   "%s": %d\n', res(i).member_name, res(i).is_input);
+            fprintf(ifid, '   "%s": %d\n', res(i).member_name, id);
         else 
-            fprintf(ifid, '   "%s": %d,\n', res(i).member_name, res(i).is_input);
+            fprintf(ifid, '   "%s": %d,\n', res(i).member_name, id);
         end
     end 
     fprintf(ifid, '}\n');

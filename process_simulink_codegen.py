@@ -129,26 +129,37 @@ def parse_inport_json(json_file):
         inport_data = json.load(f)
 
         inputs = []
-        parameters = []
+        parameters = {}
         
         for inport in inport_data:
-            if (inport_data[inport]) == 0:
-                parameters.append(inport)
-            else:
+            if (inport_data[inport]) == 1:
                 inputs.append(inport)
+            elif (inport_data[inport] == 2):
+                parameters[inport] = "bool"
+            else:
+                parameters[inport] = "float"
 
         return [inputs, parameters]
 
 
-def generate_model_integration(model, parameters, inputs, output_dir):
-    template = Template(filename="matlab_model/MatlabModelIntegration.hpp.mako")
-    rendered = template.render(model=model, parameters=parameters, inputs=inputs)
+def generate_model_integration(model, parameters, inputs, output_include, output_src):
+    header_template = Template(filename="matlab_model/MatlabModelIntegration.hpp.mako")
+    header_rendered = header_template.render(model=model, parameters=parameters, inputs=inputs)
 
-    integration_file_path = os.path.join(output_dir, model + '_MatlabModel.hpp')
-    with open(integration_file_path, 'w') as f:
-        f.write(rendered)
+    src_template = Template(filename="matlab_model/MatlabModelIntegration.cpp.mako")
+    src_rendered = src_template.render(model=model, parameters=parameters, inputs=inputs)
 
-    print(f"{model}_MatlabModel.hpp generated at '{integration_file_path}'.")
+    integration_header_fpath = os.path.join(output_include, model + '_MatlabModel.hpp')
+    with open(integration_header_fpath, 'w') as f:
+        f.write(header_rendered)
+
+    print(f"{model}_MatlabModel.hpp generated at '{integration_header_fpath}'.")
+
+    inegration_src_fpath = os.path.join(output_src, model + "_MatlabModel.cpp")
+    with open(inegration_src_fpath, 'w') as f:
+        f.write(src_rendered)
+
+    print(f"{model}_MatlabModel.hpp generated at '{inegration_src_fpath}'.")
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
@@ -184,11 +195,13 @@ if __name__ == "__main__":
     copy_directory('cmake/', os.path.join(output_directory, 'cmake'))
 
     # Generate and move state estimation files
-    state_estimation_output = output_directory + "/matlab_model/include"
-    os.makedirs(state_estimation_output, exist_ok=True)
-    shutil.copy("matlab_model/MatlabModel.hpp", state_estimation_output)
+    state_estimation_include = output_directory + "/matlab_model/include"
+    state_estimation_src = output_directory + "/matlab_model/src"
+    os.makedirs(state_estimation_include, exist_ok=True)
+    os.makedirs(state_estimation_src, exist_ok=True)
+    shutil.copy("matlab_model/MatlabModel.hpp", state_estimation_include)
     for file in files:
         # Use inport data to generate header and src matlab math
-            inportInfoJsonName = file.strip(".zip") + "_inport_info.json"
-            inputs, parameters = parse_inport_json(inportInfoJsonName)
-            generate_model_integration(model=file.strip(".zip"), parameters=parameters, inputs=inputs, output_dir=state_estimation_output)
+        inportInfoJsonName = file.strip(".zip") + "_inport_info.json"
+        inputs, parameters = parse_inport_json(inportInfoJsonName)
+        generate_model_integration(model=file.strip(".zip"), parameters=parameters, inputs=inputs, output_include=state_estimation_include, output_src=state_estimation_src)
