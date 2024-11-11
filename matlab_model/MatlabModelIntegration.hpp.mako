@@ -1,7 +1,7 @@
 #include <unordered_map>
 #include <mutex> 
 #include "${model}.h"
-#include <Configurable.h>
+#include <Configurable.hpp>
 
 namespace estimation
 {

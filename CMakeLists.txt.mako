@@ -43,15 +43,15 @@ add_library(matlab_model SHARED
 % endfor
 )
 
-target_include_directories(matlab_model SHARED 
+target_include_directories(matlab_model PUBLIC 
   <%text>$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/</%text>matlab_model/include>
   <%text>$<INSTALL_INTERFACE</%text>:matlab_model/include>)
 
-target_link_libraries(matlab_model SHARED
+target_link_libraries(matlab_model PUBLIC
     % for library in libraries: 
     ${library['name']}
     %endfor
-    drivebrain::drivebrain_core
+    drivebrain_core::drivebrain_core
 )
 
 install(

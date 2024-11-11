@@ -53,7 +53,7 @@
    "interp_y3_RR": 0,
    "SteeringWheelAngleDeg": 0,
    "Vx_VN": 1,
-   "Psi_dot_VNrads": 0,
+   "Psi_dot_VNrads": 1,
    "DriveBiasFront": 0,
    "BrakeBiasFront": 0,
    "useFakeData": 2,
