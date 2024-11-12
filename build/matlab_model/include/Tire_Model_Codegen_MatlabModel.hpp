@@ -4,10 +4,9 @@
 #include <Configurable.hpp>
 #include <MatlabModel.hpp>
 
-
 namespace estimation
 {
-    class Tire_Model_Codegen_MatlabModel : public MatlabModel {
+    class Tire_Model_Codegen_MatlabModel : MatlabModel, core::common::Configurable {
 
         public:
 
@@ -94,7 +93,13 @@ namespace estimation
 
             Tire_Model_Codegen_MatlabModel(core::Logger &logger, core::JsonFileHandler &json_file_handler, bool &construction_failed);
 
+            void handle_parameter_updates(const std::unordered_map<std::string, core::common::Configurable::ParamTypes> &new_param_map);
+
             Tire_Model_Codegen::ExtY_Tire_Model_Codegen_T evaluate_estimator(inputs &new_inputs);
+
+            bool init();
+
+            std::unordered_map<std::string, float> &get_params();
 
         private: 
             Tire_Model_Codegen::ExtU_Tire_Model_Codegen_T _model_inputs;

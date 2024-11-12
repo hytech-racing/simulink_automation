@@ -2,10 +2,11 @@
 #include <mutex> 
 #include "${model}.h"
 #include <Configurable.hpp>
+#include <MatlabModel.hpp>
 
 namespace estimation
 {
-    class ${model}_MatlabModel : MatlabModel, Configurable {
+    class ${model}_MatlabModel : MatlabModel, core::common::Configurable {
 
         public:
 
@@ -27,12 +28,16 @@ namespace estimation
 
             ${model}::ExtY_Tire_Model_Codegen_T evaluate_estimator(inputs &new_inputs);
 
+            bool init();
+
+            std::unordered_map<std::string, float> &get_params();
+
         private: 
-            ${model}::ExtU_${model} _model_inputs;
+            ${model}::ExtU_${model}_T _model_inputs;
             ${model} ${model}_model;
             inputs _inputs;
             parameters _parameters;
 
             std::mutex _parameter_mutex;
-    }
+    };
 }

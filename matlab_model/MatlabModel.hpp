@@ -3,12 +3,8 @@
 class MatlabModel {
     public:
 
-        MatlabModel() = delete;
-
-        bool model_init();
-
-        void initialize_model_inputs();
+        bool init();
 
         std::unordered_map<std::string, float> &get_params();
 
-}
+};
