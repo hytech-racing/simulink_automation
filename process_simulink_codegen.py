@@ -126,7 +126,7 @@ def generate_cmakelists(libraries, output_dir):
 
 def parse_inport_json(json_file):
     with open(json_file, 'r') as f:
-        inport_data = json.load(f)
+        inport_data = json.load(f)["inports"]
 
         inputs = []
         parameters = {}

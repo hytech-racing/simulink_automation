@@ -2,10 +2,12 @@
 #include <mutex> 
 #include "Tire_Model_Codegen.h"
 #include <Configurable.hpp>
+#include <MatlabModel.hpp>
+
 
 namespace estimation
 {
-    class Tire_Model_Codegen_MatlabModel : MatlabModel, Configurable {
+    class Tire_Model_Codegen_MatlabModel : public MatlabModel {
 
         public:
 
@@ -92,16 +94,14 @@ namespace estimation
 
             Tire_Model_Codegen_MatlabModel(core::Logger &logger, core::JsonFileHandler &json_file_handler, bool &construction_failed);
 
-            void handle_parameter_updates(const std::unordered_map<std::string, core::common::Configurable::ParamTypes> &new_param_map);
-
             Tire_Model_Codegen::ExtY_Tire_Model_Codegen_T evaluate_estimator(inputs &new_inputs);
 
         private: 
-            Tire_Model_Codegen::ExtU_Tire_Model_Codegen _model_inputs;
+            Tire_Model_Codegen::ExtU_Tire_Model_Codegen_T _model_inputs;
             Tire_Model_Codegen Tire_Model_Codegen_model;
             inputs _inputs;
             parameters _parameters;
 
             std::mutex _parameter_mutex;
-    }
+    };
 }

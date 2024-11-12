@@ -1,9 +1,8 @@
 #include "Tire_Model_Codegen.h"
 #include "Tire_Model_Codegen_MatlabModel.hpp"
 
-namespace estimation {
 
-    Tire_Model_Codegen_MatlabModel::handle_parameter_updates(const std::unordered_map<std::string, core::common::Configurable::ParamTypes> &new_param_map) 
+    void estimation::Tire_Model_Codegen_MatlabModel::handle_parameter_updates(const std::unordered_map<std::string, core::common::Configurable::ParamTypes> &new_param_map) 
     {
         if (auto pval = std::get_if<float>(&new_param_map.at("LMUXFL"))) {
             std::unique_lock lk(_parameter_mutex);
@@ -267,12 +266,13 @@ namespace estimation {
         }
     }
 
-    Tire_Model_Codegen_MatlabModel::Tire_Model_Codegen_MatlabModel() : Configurable(logger, json_file_handler, "Tire_Model_Codegen_MatlabModel") {
+
+    estimation::Tire_Model_Codegen_MatlabModel::Tire_Model_Codegen_MatlabModel() : Configurable(logger, json_file_handler, "Tire_Model_Codegen_MatlabModel") {
         construction_failed = !init();
         _inputs = { }
     }
     
-    bool Tire_Model_Codegen_MatlabModel::init(bool &construction_failed) {
+    bool estimation::Tire_Model_Codegen_MatlabModel::init() {
         auto LMUXFL = get_parameter_value<float>("LMUXFL");
         auto LMUXFR = get_parameter_value<float>("LMUXFR");
         auto LMUXRL = get_parameter_value<float>("LMUXRL");
@@ -394,7 +394,7 @@ namespace estimation {
 
     }
 
-    Tire_Model_Codegen::ExtY_Tire_Model_Codegen_T Tire_Model_Codegen_MatlabModel::evaluate_estimator(inputs &new_inputs) {
+    estimation::Tire_Model_Codegen::ExtY_Tire_Model_Codegen_T Tire_Model_Codegen_MatlabModel::evaluate_estimator(inputs &new_inputs) {
         // Update inputs before evaluating estimator
         _inputs.InitialTorqReqFL = new_inputs.InitialTorqReqFL;
         _inputs.InitialTorqReqFR = new_inputs.InitialTorqReqFR;
@@ -427,5 +427,3 @@ namespace estimation {
 
         return outputs;
     }
-
-}

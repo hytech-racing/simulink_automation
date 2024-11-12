@@ -32,7 +32,7 @@ for i = 1:length(modelList)
 
     % Write inport information to zip file
     areas = getInportAreas(modelName);
-    res = associateInportWithStructMemberNames(codeInfo.codeInfo, areas);
+    [inports_struct, outports_struct] = associateInportWithStructMemberNames(codeInfo.codeInfo, areas);
 
     inportInfoJsonName = strcat(modelName, '_inport_info.json');
     ifid = fopen(inportInfoJsonName, 'w');
@@ -41,25 +41,39 @@ for i = 1:length(modelList)
         error('Cannot create Inport Info JSON');
     end
 
+    % Write inports to json
     fprintf(ifid, '{\n');
-
-    for i=1:length(res)
+    fprintf(ifid, '   "inports" : {\n');
+    for i=1:length(inports_struct)
 
         id = 0;
-        if res(i).is_input
+        if inports_struct(i).is_input
             id = 1;
         end
 
-        if res(i).is_bool
+        if inports_struct(i).is_bool
             id = 2;
         end
 
-        if i == length(res)
-            fprintf(ifid, '   "%s": %d\n', res(i).member_name, id);
+        if i == length(inports_struct)
+            fprintf(ifid, '      "%s": %d\n', inports_struct(i).member_name, id);
         else 
-            fprintf(ifid, '   "%s": %d,\n', res(i).member_name, id);
+            fprintf(ifid, '      "%s": %d,\n', inports_struct(i).member_name, id);
         end
     end 
+    fprintf(ifid, "   },\n");
+
+    % Write outports to json
+    fprintf(ifid, '   "outports" : {\n');
+    for i = 1:length(outports_struct)
+        if i == length(outports_struct)
+            fprintf(ifid, '      "%s": %d\n', outports_struct(i).member_name, 0);
+        else 
+            fprintf(ifid, '      "%s": %d,\n', outports_struct(i).member_name, 0);
+        end
+    end
+    fprintf(ifid, '   }\n');
+
     fprintf(ifid, '}\n');
 
     fclose(ifid);
