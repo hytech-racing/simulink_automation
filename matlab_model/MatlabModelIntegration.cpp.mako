@@ -58,7 +58,7 @@ bool estimation::${model}_MatlabModel::init() {
 ${model}::ExtY_Tire_Model_Codegen_T estimation::${model}_MatlabModel::evaluate_estimator(inputs &new_inputs) {
     parameters curr_params;
     {
-        std::unique_lock lk(_parameters);
+        std::unique_lock lk(_parameter_mutex);
         curr_params = _parameters;
     }
 
