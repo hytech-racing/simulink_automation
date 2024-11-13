@@ -56,10 +56,20 @@ bool estimation::${model}_MatlabModel::init() {
 }
 
 ${model}::ExtY_Tire_Model_Codegen_T estimation::${model}_MatlabModel::evaluate_estimator(inputs &new_inputs) {
-    // Update inputs before evaluating estimator
+    parameters curr_params;
+    {
+        std::unique_lock lk(_parameters);
+        curr_params = _parameters;
+    }
+
+    // Update model inputs before evaluating estimator
     % for input in inputs:
     _model_inputs.${input} = new_inputs.${input};
     % endfor  
+
+    % for parameter in parameters:
+    _model_inputs.${parameter} = curr_params.${parameter};
+    % endfor
 
     // Evaluate estimator 
     ${model}_model.setExternalInputs(&_model_inputs);
