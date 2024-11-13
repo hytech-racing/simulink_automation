@@ -1,3 +1,6 @@
+#ifndef __${model.upper()}_MATLABMODEL_H__
+#define __${model.upper()}_MATLABMODEL_H__
+
 #include <unordered_map>
 #include <mutex> 
 #include "${model}.h"
@@ -41,3 +44,5 @@ namespace estimation
             std::mutex _parameter_mutex;
     };
 }
+
+#endif
