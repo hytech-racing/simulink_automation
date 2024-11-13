@@ -69,6 +69,4 @@ ${model}::ExtY_Tire_Model_Codegen_T estimation::${model}_MatlabModel::evaluate_e
     return outputs;
 }
 
-#endif
-
 
