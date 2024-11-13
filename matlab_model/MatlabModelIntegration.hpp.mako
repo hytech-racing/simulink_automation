@@ -9,7 +9,7 @@
 
 namespace estimation
 {
-    class ${model}_MatlabModel : MatlabModel, core::common::Configurable {
+    class ${model}_MatlabModel : public MatlabModel, public core::common::Configurable {
 
         public:
 
