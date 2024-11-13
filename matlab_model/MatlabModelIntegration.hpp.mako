@@ -38,7 +38,6 @@ namespace estimation
         private: 
             ${model}::ExtU_${model}_T _model_inputs;
             ${model} ${model}_model;
-            inputs _inputs;
             parameters _parameters;
 
             std::mutex _parameter_mutex;

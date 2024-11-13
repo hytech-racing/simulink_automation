@@ -14,7 +14,7 @@ void estimation::${model}_MatlabModel::handle_parameter_updates(const std::unord
 
 estimation::${model}_MatlabModel::${model}_MatlabModel(core::Logger &logger, core::JsonFileHandler &json_file_handler, bool &construction_failed) : Configurable(logger, json_file_handler, "${model}_MatlabModel") {
     construction_failed = !init();
-    _inputs = { };
+    _model_inputs = { };
 }
 <%!
 def format_params_check(params):
@@ -58,7 +58,7 @@ bool estimation::${model}_MatlabModel::init() {
 ${model}::ExtY_Tire_Model_Codegen_T estimation::${model}_MatlabModel::evaluate_estimator(inputs &new_inputs) {
     // Update inputs before evaluating estimator
     % for input in inputs:
-    _inputs.${input} = new_inputs.${input};
+    _model_inputs.${input} = new_inputs.${input};
     % endfor  
 
     // Evaluate estimator 
