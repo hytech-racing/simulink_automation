@@ -35,7 +35,7 @@ def format_parameter_derefencering(parameters):
 %>
 bool estimation::${model}_MatlabModel::init() {
     % for parameter in parameters:
-    auto ${parameter} = get_parameter_value<${parameters[parameter]}>("${parameter}");
+    auto ${parameter} = get_live_parameter<${parameters[parameter]}>("${parameter}");
     % endfor
 
     if (!(${format_params_check(parameters)})) 
