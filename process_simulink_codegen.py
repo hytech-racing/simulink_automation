@@ -138,16 +138,23 @@ def parse_inport_json(json_file):
                 parameters[inport] = "bool"
             else:
                 parameters[inport] = "float"
-
+        
         return [inputs, parameters]
 
+def parse_outports(json_file):
+    with open(json_file, 'r') as f:
+        outport_data = json.load(f)["outports"]
+        outputs = []
+        for output in outport_data:
+            outputs.append(output)
+        return outputs
 
-def generate_model_integration(model, parameters, inputs, output_include, output_src):
+def generate_model_integration(model, parameters, inputs, outputs, output_include, output_src):
     header_template = Template(filename="matlab_model/MatlabModelIntegration.hpp.mako")
     header_rendered = header_template.render(model=model, parameters=parameters, inputs=inputs)
 
     src_template = Template(filename="matlab_model/MatlabModelIntegration.cpp.mako")
-    src_rendered = src_template.render(model=model, parameters=parameters, inputs=inputs)
+    src_rendered = src_template.render(model=model, parameters=parameters, inputs=inputs, outputs=outputs)
 
     integration_header_fpath = os.path.join(output_include, model + '_MatlabModel.hpp')
     with open(integration_header_fpath, 'w') as f:
@@ -204,4 +211,5 @@ if __name__ == "__main__":
         # Use inport data to generate header and src matlab math
         inportInfoJsonName = file.strip(".zip") + "_inport_info.json"
         inputs, parameters = parse_inport_json(inportInfoJsonName)
-        generate_model_integration(model=file.strip(".zip"), parameters=parameters, inputs=inputs, output_include=state_estimation_include, output_src=state_estimation_src)
+        outputs = parse_outports(inportInfoJsonName)
+        generate_model_integration(model=file.strip(".zip"), parameters=parameters, inputs=inputs, outputs=outputs, output_include=state_estimation_include, output_src=state_estimation_src)

@@ -79,4 +79,12 @@ ${model}::ExtY_Tire_Model_Codegen_T estimation::${model}_MatlabModel::evaluate_e
     return outputs;
 }
 
+std::shared_ptr<hytech_msgs::${model}> estimation::${model}_MatlabModel::create_message(${model}::ExtY_${model}_T model_output) {
+    std::shared_ptr<hytech_msgs::${model}> msg_out = std::make_shared<hytech_msgs::${model}>();
 
+    % for output in outputs:
+    msg_out->set_${output}(model_output.${output});
+    % endfor
+
+    return msg_out;
+}

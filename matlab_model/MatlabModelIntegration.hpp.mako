@@ -31,6 +31,8 @@ namespace estimation
 
             ${model}::ExtY_Tire_Model_Codegen_T evaluate_estimator(inputs &new_inputs);
 
+            std::shared_ptr<hytech_msgs::${model}> create_message(${model}::ExtY_${model}_T model_output);
+
             bool init();
 
             std::unordered_map<std::string, float> &get_params();
