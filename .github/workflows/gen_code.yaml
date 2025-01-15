@@ -76,3 +76,10 @@ jobs:
           tag_name: ${{ steps.tag.outputs.release_tag }}
           files: |
             matlab_math.tar.gz
+
+      - name: Dispatch to HT Proto
+        run: |
+          curl -XPOST -u "${{ secrets.KRISHS_PAT }}:${{ secrets.KRISHS_PAT }}" \
+          -H "Accept: application/vnd.github.everest-preview+json" \ 
+          -H "Content-Type: application/json" \    
+          https://api.github.com/repos/hytech-racing/simulink_automation/dispatches --data '"$(jq -c . info.json)"'
