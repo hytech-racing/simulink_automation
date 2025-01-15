@@ -82,4 +82,4 @@ jobs:
           curl -XPOST -u "${{ secrets.KRISHS_PAT }}:${{ secrets.KRISHS_PAT }}" \
           -H "Accept: application/vnd.github.everest-preview+json" \ 
           -H "Content-Type: application/json" \    
-          https://api.github.com/repos/hytech-racing/simulink_automation/dispatches --data '"$(jq -c . info.json)"'
+          https://api.github.com/repos/hytech-racing/HT_proto/dispatches --data '"$(jq -c . info.json)"'
