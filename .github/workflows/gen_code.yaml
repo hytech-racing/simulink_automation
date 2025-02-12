@@ -41,7 +41,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: hytech-racing/HyTech_sim
-          token: ${{ secrets.KRISHS_PAT }}
+          token: ${{ secrets.KRISHS_PAT }} 
           path: HyTech_sim
           ref: 'main'
 
