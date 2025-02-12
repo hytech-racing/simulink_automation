@@ -61,10 +61,20 @@ jobs:
           -H "Content-Type: application/json" \    
           https://api.github.com/repos/hytech-racing/HT_proto/dispatches --data '"$(jq -c . info.json)"'
       
-      - name: Run Python script
+      - name: Run cpplib Python script
         run: |
           mkdir source_code
           python process_simulink_codegen.py source_code
+
+      uses: cachix/install-nix-action@v23
+      - name: Get branch names
+        id: branch-name
+        uses: tj-actions/branch-names@v7
+
+      - name: Print JSON for testing
+        run: | 
+          ls && cat Tire_Model_Codegen_inport_info.json
+
 
       - name: Create release artifact
         run: | 
