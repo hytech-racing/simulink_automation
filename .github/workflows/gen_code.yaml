@@ -15,6 +15,11 @@ jobs:
         with:
           ref: feature/model_processing_addition
 
+      - uses: cachix/install-nix-action@v23
+      - name: Get branch names
+        id: branch-name
+        uses: tj-actions/branch-names@v7
+
       - name: Set up MATLAB
         uses: matlab-actions/setup-matlab@v2
         with:
@@ -45,10 +50,6 @@ jobs:
           path: HyTech_sim
           ref: 'main'
 
-      - name: Debugging
-        run: |
-          ls
-
       - name: Run matlab script
         uses: matlab-actions/run-command@v2
         with:
@@ -59,7 +60,7 @@ jobs:
           mkdir source_code
           python process_simulink_codegen.py source_code
 
-      - name: Generate proto lib
+      - name: Create proto lib
         run: | 
           mkdir output_proto
           python json_to_proto.py Tire_Model_Codegen_inport_info.json
@@ -67,6 +68,8 @@ jobs:
       - name: Create cpp lib release artifact
         run: | 
           tar -czvf matlab_math.tar.gz source_code
+
+      - run: nix run .#nanopb-runner -- ${{ steps.date.outputs.date }}
 
       - name: Create proto release artifact
         run: | 
