@@ -1,20 +1,19 @@
-import argparse
 import json
 from mako.template import Template
 import os
 import sys
 
 # 1. Returns JSON Data
-def get_json(): 
-    parser = argparse.ArgumentParser()
-    parser.add_argument('json_data', type=str)
-    args = parser.parse_args()
-    data = json.loads(args.json_data)
+def get_json(file_name): 
 
+    f = open(file_name)
+
+    data = json.load(f)
     return data
 
 # 2. Convert JSON
 def generate_proto(json_data, output_dir): 
+
     try: 
         outports = json_data["outports"]
     except: 
@@ -30,5 +29,5 @@ def generate_proto(json_data, output_dir):
     print("Proto message file successfully generated at " + output_fpath)
 
 if __name__ == "__main__": 
-    data = get_json()
+    data = get_json(sys.argv[1])
     generate_proto(data, "")
