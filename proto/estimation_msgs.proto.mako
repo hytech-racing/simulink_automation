@@ -1,3 +1,7 @@
+syntax = "proto3";
+package hytech_msgs;
+import "nanopb.proto";
+
 message Outports
 {
     % for outport in outports: 
