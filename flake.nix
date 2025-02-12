@@ -25,7 +25,7 @@
         if [ "$#" -gt 0 ]; then
           generate_header "$1"
         fi
-        ${pkgs.nanopb}/bin/nanopb_generator.py -I=./proto estimation_msgs.proto
+        ${pkgs.nanopb}/bin/nanopb_generator.py -I=./. estimation_msgs.proto
       '';
     in
     {
