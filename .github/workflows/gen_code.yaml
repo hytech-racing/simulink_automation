@@ -54,6 +54,10 @@ jobs:
         with:
           command: gencode_v2
 
+      - name: Print stuff
+        run: |
+          ls && cat Tire_Model_Codegen_inport_info.json
+
       - name: Dispatch to HT Proto
         run: |
           curl -XPOST -u "${{ secrets.KRISHS_PAT }}:${{ secrets.KRISHS_PAT }}" \
@@ -61,20 +65,10 @@ jobs:
           -H "Content-Type: application/json" \    
           https://api.github.com/repos/hytech-racing/HT_proto/dispatches --data '"$(jq -c . info.json)"'
       
-      - name: Run cpplib Python script
+      - name: Run Python script
         run: |
           mkdir source_code
           python process_simulink_codegen.py source_code
-
-      uses: cachix/install-nix-action@v23
-      - name: Get branch names
-        id: branch-name
-        uses: tj-actions/branch-names@v7
-
-      - name: Print JSON for testing
-        run: | 
-          ls && cat Tire_Model_Codegen_inport_info.json
-
 
       - name: Create release artifact
         run: | 
