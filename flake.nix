@@ -22,9 +22,7 @@
           echo "#endif" >> estimation_msgs_version.h
         }
 
-        if [ "$#" -gt 0 ]; then
-          generate_header "$1"
-        fi
+        generate_header "$1"
         ${pkgs.nanopb}/bin/nanopb_generator.py -I=./. estimation_msgs.proto
       '';
     in
