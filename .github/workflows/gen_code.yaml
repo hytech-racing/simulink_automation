@@ -72,6 +72,10 @@ jobs:
       - name: Debug
         run: |
           ls
+      
+      - name: Debugging
+        run: |  
+          cat estimation_msgs.proto
 
       - run: nix run .#nanopb-runner -- ${{ steps.date.outputs.date }}
 

@@ -1,5 +1,5 @@
 syntax = "proto3";
-package hytech_msgs;
+package estimation_msgs;
 import "nanopb.proto";
 
 message Outports
