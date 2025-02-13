@@ -20,8 +20,10 @@ def generate_proto(json_data, output_dir):
         print("Error: Probably bad data.")
         sys.exit(1)
 
+    count = [0]
+
     template = Template(filename="proto/estimation_msgs.proto.mako")
-    rendered = template.render(outports=outports, count=0)
+    rendered = template.render(outports=outports, count=count)
 
     output_fpath = os.path.join(output_dir, "estimation_msgs.proto")
     with open(output_fpath, 'w') as f: 

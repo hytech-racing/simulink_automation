@@ -14,6 +14,6 @@ def render_outport(outports, outport, count):
     data_type = "float" 
     if (id == 2): 
         data_type = "bool"
-    count += 1
-    return data_type + " " + outport + " = " + str(count) + ";"
+    count[0] += 1
+    return data_type + " " + outport + " = " + str(count[0]) + ";"
 %>
