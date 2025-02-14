@@ -20,6 +20,8 @@ def generate_proto(json_data, output_dir):
         print("Error: Probably bad data.")
         sys.exit(1)
 
+    os.makedirs(output_dir, exist_ok=True)
+
     count = [0]
 
     template = Template(filename="proto/estimation_msgs.proto.mako")
@@ -32,4 +34,4 @@ def generate_proto(json_data, output_dir):
 
 if __name__ == "__main__": 
     data = get_json(sys.argv[1])
-    generate_proto(data, "")
+    generate_proto(data, sys.argv[2])

@@ -63,30 +63,11 @@ jobs:
       - name: Create proto lib
         run: | 
           mkdir output_proto
-          python json_to_proto.py Tire_Model_Codegen_inport_info.json
+          python json_to_proto.py Tire_Model_Codegen_inport_info.json output_proto
 
       - name: Create cpp lib release artifact
         run: | 
           tar -czvf matlab_math.tar.gz source_code
-
-      - name: Debug
-        run: |
-          ls
-
-      - run: nix run .#nanopb-runner -- ${{ steps.date.outputs.date }}
-
-      - name: Debugging
-        run: |  
-          ls
-          cat estimation_msgs.proto
-
-      - name: Create proto release artifact
-        run: | 
-          mkdir -p estimation_msgs_pb_lib
-          mv *.pb.* estimation_msgs_pb_lib
-          mv estimation_msgs_version.h estimation_msgs_pb_lib
-          echo -e "{\n\"name\": \"estimation_msgs_pb_lib\",\n\"version\": \"1.${{ github.run_number }}.0\"\n}" >> estimation_msgs_pb_lib/library.json
-          tar -czvf estimation_msgs_pb_lib.tar.gz estimation_msgs_pb_lib
 
       - name: Generate release tag
         id: tag
@@ -101,5 +82,5 @@ jobs:
           tag_name: ${{ steps.tag.outputs.release_tag }}
           files: |
             matlab_math.tar.gz
-            estimation_msgs_pb_lib.tar.gz
+            output_proto
             
