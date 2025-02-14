@@ -1,6 +1,5 @@
 syntax = "proto3";
 package estimation_msgs;
-import "nanopb.proto";
 
 message Outports
 {
