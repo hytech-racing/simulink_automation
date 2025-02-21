@@ -54,6 +54,10 @@ jobs:
         uses: matlab-actions/run-command@v2
         with:
           command: gencode_v2
+
+      - name: Add debugging step
+        run: |
+          cat Tire_Model_Codegen_inport_info.json
       
       - name: Generate cpp lib script
         run: |
