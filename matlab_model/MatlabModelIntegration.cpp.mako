@@ -14,23 +14,8 @@ void estimation::${model}_MatlabModel::handle_parameter_updates(const std::unord
 
 void estimation::${model}_MatlabModel::update_proto_info(${model}::ExtY_${model}_T res, std::shared_ptr<${model}_estimation_msgs::Outports> msg)
 { 
-    parameters curr_params; 
-    inputs curr_inputs; 
-    {
-        std::unique_lock lk(_parameter_mutex); 
-        curr_params = _parameters;
-    }
-    
-    % for parameter in parameters: 
-    msg->${parameter} = res.${parameter};
-    % endfor
-    {
-        std::unique_lock lk(_input_mutex);
-        curr_inputs = _inputs;
-    }
-
-    % for input in inputs: 
-    msg->${input} = res.${input};
+    % for outport in outports: 
+    msg->${outport} = res.${outport};
     % endfor
 }
 

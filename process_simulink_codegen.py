@@ -127,10 +127,14 @@ def generate_cmakelists(libraries, output_dir):
 
 def parse_inport_json(json_file):
     with open(json_file, 'r') as f:
-        inport_data = json.load(f)["inports"]
+        json_data = json.load(f)
+        inport_data = json_data["inports"]
+        outport_data = json_data["outports"]
 
         inputs = []
         parameters = {}
+        outports = []
+
         
         for inport in inport_data:
             if (inport_data[inport]) == 1:
@@ -140,15 +144,19 @@ def parse_inport_json(json_file):
             else:
                 parameters[inport] = "float"
 
-        return [inputs, parameters]
+        for outport in outport_data:
+            outports.append(outport)
+        
+
+        return [inputs, parameters, outports]
 
 
-def generate_model_integration(model, parameters, inputs, output_include, output_src):
+def generate_model_integration(model, parameters, inputs, outports, output_include, output_src):
     header_template = Template(filename="matlab_model/MatlabModelIntegration.hpp.mako")
-    header_rendered = header_template.render(model=model, parameters=parameters, inputs=inputs)
+    header_rendered = header_template.render(model=model, parameters=parameters, inputs=inputs, outports=outports)
 
     src_template = Template(filename="matlab_model/MatlabModelIntegration.cpp.mako")
-    src_rendered = src_template.render(model=model, parameters=parameters, inputs=inputs)
+    src_rendered = src_template.render(model=model, parameters=parameters, inputs=inputs, outports=outports)
 
     integration_header_fpath = os.path.join(output_include, model + '_MatlabModel.hpp')
     with open(integration_header_fpath, 'w') as f:
@@ -204,7 +212,7 @@ if __name__ == "__main__":
     for file in files:
         # Use inport data to generate header and src matlab math
         inportInfoJsonName = file.strip(".zip") + "_inport_info.json"
-        inputs, parameters = parse_inport_json(inportInfoJsonName)
-        generate_model_integration(model=file.strip(".zip"), parameters=parameters, inputs=inputs, output_include=state_estimation_include, output_src=state_estimation_src)
+        inputs, parameters, outports = parse_inport_json(inportInfoJsonName)
+        generate_model_integration(model=file.strip(".zip"), parameters=parameters, inputs=inputs, outports=outports, output_include=state_estimation_include, output_src=state_estimation_src)
         os.makedirs("proto_outputs", exist_ok=True)
         json_to_proto.run(inportInfoJsonName, "proto_outputs/" + file.strip(".zip") + "_estimation_msgs.proto")
