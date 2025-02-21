@@ -20,17 +20,17 @@ void estimation::${model}_MatlabModel::update_proto_info(${model}::ExtY_${model}
         std::unique_lock lk(_parameter_mutex); 
         curr_params = _parameters;
     }
-    # Popular the protobuf message
+    
     % for parameter in parameters: 
-    res.${parameter} = parameter;
+    msg.${parameter} = res.${parameter};
     % endfor
-
     {
         std::unique_lock lk(_input_mutex);
         curr_inputs = _inputs;
     }
+
     % for input in inputs: 
-    res.${input} = input
+    msg.${input} = res.${input};
     % endfor
 }
 
