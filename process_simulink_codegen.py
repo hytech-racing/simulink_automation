@@ -135,7 +135,6 @@ def parse_inport_json(json_file):
         parameters = {}
         outports = []
 
-        
         for inport in inport_data:
             if (inport_data[inport]) == 1:
                 inputs.append(inport)
