@@ -12,12 +12,17 @@ void estimation::${model}_MatlabModel::handle_parameter_updates(const std::unord
     % endfor
 }
 
+<%!
+def to_lower_case(s):
+    return s.lower()
+%>
 void estimation::${model}_MatlabModel::update_proto_info(${model}::ExtY_${model}_T res, std::shared_ptr<simulink_estimation_msgs::Outports> msg)
 { 
     % for outport in outports: 
-    msg->set_${outport}(res.${outport});
+    msg->set_${to_lower_case(outport)}(res.${outport});
     % endfor
 }
+
 
 estimation::${model}_MatlabModel::${model}_MatlabModel(core::Logger &logger, core::JsonFileHandler &json_file_handler, bool &construction_failed) : Configurable(logger, json_file_handler, "${model}_MatlabModel") {
     construction_failed = !init();
