@@ -6,6 +6,7 @@
 #include "${model}.h"
 #include <Configurable.hpp>
 #include <MatlabModel.hpp>
+#include <memory>
 #include "${model}_estimation_msgs.pb.h"
 
 namespace estimation

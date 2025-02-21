@@ -22,7 +22,7 @@ void estimation::${model}_MatlabModel::update_proto_info(${model}::ExtY_${model}
     }
     
     % for parameter in parameters: 
-    msg.${parameter} = res.${parameter};
+    msg->${parameter} = res.${parameter};
     % endfor
     {
         std::unique_lock lk(_input_mutex);
@@ -30,7 +30,7 @@ void estimation::${model}_MatlabModel::update_proto_info(${model}::ExtY_${model}
     }
 
     % for input in inputs: 
-    msg.${input} = res.${input};
+    msg->${input} = res.${input};
     % endfor
 }
 
