@@ -15,7 +15,7 @@ void estimation::${model}_MatlabModel::handle_parameter_updates(const std::unord
 void estimation::${model}_MatlabModel::update_proto_info(${model}::ExtY_${model}_T res, std::shared_ptr<simulink_estimation_msgs::Outports> msg)
 { 
     % for outport in outports: 
-    msg->${outport} = res.${outport};
+    msg->set_${outport}(res.${outport});
     % endfor
 }
 
