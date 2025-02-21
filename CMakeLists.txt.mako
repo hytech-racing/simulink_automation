@@ -6,6 +6,8 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(CMAKE_INCLUDE_HEADERS_IN_COMPILE_COMMANDS ON)
 
 find_package(drivebrain_core REQUIRED)
+find_package(simulink_automation_msgs_proto_cpp REQUIRED)
+find_package(protobuf REQUIRED)
 
 include(GNUInstallDirs)
 <%!
@@ -52,6 +54,8 @@ target_link_libraries(matlab_model PUBLIC
     ${library['name']}
     %endfor
     drivebrain_core::drivebrain_core
+    protobuf::libprotobuf
+    simulink_automation_msgs_proto_cpp::simulink_automation_msgs_proto_cpp
 )
 
 install(

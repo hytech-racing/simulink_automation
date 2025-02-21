@@ -1,5 +1,5 @@
 syntax = "proto3";
-package estimation_msgs;
+package simulink_estimation_msgs;
 
 message Outports
 {
