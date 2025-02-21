@@ -6,6 +6,7 @@
 #include "${model}.h"
 #include <Configurable.hpp>
 #include <MatlabModel.hpp>
+#include "${model}_estimation_msgs.pb.h"
 
 namespace estimation
 {
@@ -29,7 +30,7 @@ namespace estimation
 
             void handle_parameter_updates(const std::unordered_map<std::string, core::common::Configurable::ParamTypes> &new_param_map);
 
-            ${model}::ExtY_Tire_Model_Codegen_T evaluate_estimator(inputs &new_inputs);
+            ${model}::ExtY_${model}_T evaluate_estimator(inputs &new_inputs);
 
             bool init();
 
@@ -41,6 +42,7 @@ namespace estimation
             parameters _parameters;
 
             std::mutex _parameter_mutex;
+            std::mutex _input_mutex;
     };
 }
 

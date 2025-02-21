@@ -12,6 +12,28 @@ void estimation::${model}_MatlabModel::handle_parameter_updates(const std::unord
     % endfor
 }
 
+void estimation::${model}_MatlabModel::update_proto_info(${model}::ExtY_${model}_T res, std::shared_ptr<${model}_estimation_msgs::Outports> msg)
+{ 
+    parameters curr_params; 
+    inputs curr_inputs; 
+    {
+        std::unique_lock lk(_parameter_mutex); 
+        curr_params = _parameters;
+    }
+    # Popular the protobuf message
+    % for parameter in parameters: 
+    res.${parameter} = parameter;
+    % endfor
+
+    {
+        std::unique_lock lk(_input_mutex);
+        curr_inputs = _inputs;
+    }
+    % for input in inputs: 
+    res.${input} = input
+    % endfor
+}
+
 estimation::${model}_MatlabModel::${model}_MatlabModel(core::Logger &logger, core::JsonFileHandler &json_file_handler, bool &construction_failed) : Configurable(logger, json_file_handler, "${model}_MatlabModel") {
     construction_failed = !init();
     _model_inputs = { };
@@ -55,7 +77,7 @@ bool estimation::${model}_MatlabModel::init() {
 
 }
 
-${model}::ExtY_Tire_Model_Codegen_T estimation::${model}_MatlabModel::evaluate_estimator(inputs &new_inputs) {
+${model}::ExtY_${model}_T estimation::${model}_MatlabModel::evaluate_estimator(inputs &new_inputs) {
     parameters curr_params;
     {
         std::unique_lock lk(_parameter_mutex);

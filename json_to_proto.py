@@ -12,7 +12,7 @@ def get_json(file_name):
     return data
 
 # 2. Convert JSON
-def generate_proto(json_data, output_dir): 
+def generate_proto(json_data, output_f_path): 
 
     try: 
         outports = json_data["outports"]
@@ -20,18 +20,16 @@ def generate_proto(json_data, output_dir):
         print("Error: Probably bad data.")
         sys.exit(1)
 
-    os.makedirs(output_dir, exist_ok=True)
-
     count = [0]
 
     template = Template(filename="proto/estimation_msgs.proto.mako")
     rendered = template.render(outports=outports, count=count)
 
-    output_fpath = os.path.join(output_dir, "estimation_msgs.proto")
-    with open(output_fpath, 'w') as f: 
+    with open(output_f_path, 'w') as f: 
         f.write(rendered)
-    print("Proto message file successfully generated at " + output_fpath)
+    print("Proto message file successfully generated at " + output_f_path)
 
-if __name__ == "__main__": 
-    data = get_json(sys.argv[1])
-    generate_proto(data, sys.argv[2])
+def run(json_file, output_f_path): 
+    data = get_json(json_file)
+    generate_proto(data, output_f_path)
+    

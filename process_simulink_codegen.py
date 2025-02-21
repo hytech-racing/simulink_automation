@@ -5,6 +5,7 @@ import json
 from mako.template import Template
 from pathlib import Path
 import shutil
+import json_to_proto
 
 def copy_directory(src, dest):
     """
@@ -205,3 +206,5 @@ if __name__ == "__main__":
         inportInfoJsonName = file.strip(".zip") + "_inport_info.json"
         inputs, parameters = parse_inport_json(inportInfoJsonName)
         generate_model_integration(model=file.strip(".zip"), parameters=parameters, inputs=inputs, output_include=state_estimation_include, output_src=state_estimation_src)
+        os.makedirs("proto_outputs", exist_ok=True)
+        json_to_proto.run(inportInfoJsonName, "proto_outputs/" + file.strip(".zip") + "_estimation_msgs.proto")

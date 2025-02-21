@@ -60,14 +60,13 @@ jobs:
           mkdir source_code
           python process_simulink_codegen.py source_code
 
-      - name: Create proto lib
-        run: | 
-          mkdir output_proto
-          python json_to_proto.py Tire_Model_Codegen_inport_info.json output_proto
-
       - name: Create cpp lib release artifact
         run: | 
           tar -czvf matlab_math.tar.gz source_code
+
+      - name: Create proto release artifact
+        run: | 
+          tar -czvf proto_outputs.tar.gz proto_outputs
 
       - name: Generate release tag
         id: tag
@@ -82,5 +81,5 @@ jobs:
           tag_name: ${{ steps.tag.outputs.release_tag }}
           files: |
             matlab_math.tar.gz
-            output_proto/*
+            proto_outputs.tar.gz
             
