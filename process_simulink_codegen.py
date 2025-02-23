@@ -214,4 +214,4 @@ if __name__ == "__main__":
         inputs, parameters, outports = parse_inport_json(inportInfoJsonName)
         generate_model_integration(model=file.strip(".zip"), parameters=parameters, inputs=inputs, outports=outports, output_include=state_estimation_include, output_src=state_estimation_src)
         os.makedirs("proto_outputs", exist_ok=True)
-        json_to_proto.run(inportInfoJsonName, "proto_outputs/" + file.strip(".zip") + "_estimation_msgs.proto")
+        json_to_proto.run(inportInfoJsonName, "proto_outputs/" + file.strip(".zip") + "_estimation_msgs.proto", file.strip(".zip"))

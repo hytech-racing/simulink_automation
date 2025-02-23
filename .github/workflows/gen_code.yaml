@@ -1,6 +1,6 @@
 name: run gen code on matlab runner on dispatch from simulink repo
 on:
-  push
+  repository_dispatch
 
 env:
   MLM_LICENSE_TOKEN: ${{ secrets.MLM_LICENSE_TOKEN }} # Defined as a secret in GitHub conf
@@ -54,10 +54,6 @@ jobs:
         uses: matlab-actions/run-command@v2
         with:
           command: gencode_v2
-
-      - name: Add debugging step
-        run: |
-          cat Tire_Model_Codegen_inport_info.json
       
       - name: Generate cpp lib script
         run: |

@@ -11,4 +11,7 @@ Tire_Model_Codegen.zip
 build
 build/
 Tire_Model_Codegen_inport_info.json
-
+__pycache__/
+__pycache__
+proto_outputs/
+proto_outputs

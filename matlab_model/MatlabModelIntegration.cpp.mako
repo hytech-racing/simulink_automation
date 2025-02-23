@@ -16,11 +16,13 @@ void estimation::${model}_MatlabModel::handle_parameter_updates(const std::unord
 def to_lower_case(s):
     return s.lower()
 %>
-void estimation::${model}_MatlabModel::update_proto_info(${model}::ExtY_${model}_T res, std::shared_ptr<simulink_estimation_msgs::Outports> msg)
+std::shared_ptr<${model}_estimation_msgs::Outports> estimation::${model}_MatlabModel::update_proto_info(${model}::ExtY_${model}_T res, ${model}_estimation_msgs::Outports* msg_in)
 { 
+    std::shared_ptr<${model}_estimation_msgs::Outports> msg = std::make_shared(msg_in);
     % for outport in outports: 
     msg->set_${to_lower_case(outport)}(res.${outport});
     % endfor
+    return msg;
 }
 
 

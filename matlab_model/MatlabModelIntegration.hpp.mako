@@ -31,7 +31,7 @@ namespace estimation
 
             void handle_parameter_updates(const std::unordered_map<std::string, core::common::Configurable::ParamTypes> &new_param_map);
 
-            void update_proto_info(${model}::ExtY_${model}_T res, std::shared_ptr<simulink_estimation_msgs::Outports> msg);
+            std::shared_ptr<${model}_estimation_msgs::Outports> update_proto_info(${model}::ExtY_${model}_T res, ${model}_estimation_msgs::Outports* msg_in);
 
             ${model}::ExtY_${model}_T evaluate_estimator(inputs &new_inputs);
 
