@@ -1,6 +1,6 @@
 name: run gen code on matlab runner on dispatch from simulink repo
 on:
-  repository_dispatch
+  workflow_dispatch
 
 env:
   MLM_LICENSE_TOKEN: ${{ secrets.MLM_LICENSE_TOKEN }} # Defined as a secret in GitHub conf
@@ -13,12 +13,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          ref: feature/model_processing_addition
-
-      - uses: cachix/install-nix-action@v23
-      - name: Get branch names
-        id: branch-name
-        uses: tj-actions/branch-names@v7
+          ref: feature/model_processing_addition # For testing
 
       - name: Set up MATLAB
         uses: matlab-actions/setup-matlab@v2
