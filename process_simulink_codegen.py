@@ -5,6 +5,7 @@ import json
 from mako.template import Template
 from pathlib import Path
 import shutil
+import json_to_proto
 
 def copy_directory(src, dest):
     """
@@ -124,6 +125,50 @@ def generate_cmakelists(libraries, output_dir):
     
     print(f"CMakeLists.txt generated at '{cmake_file_path}'.")
 
+def parse_inport_json(json_file):
+    with open(json_file, 'r') as f:
+        json_data = json.load(f)
+        inport_data = json_data["inports"]
+        outport_data = json_data["outports"]
+
+        inputs = []
+        parameters = {}
+        outports = []
+
+        for inport in inport_data:
+            if (inport_data[inport]) == 1:
+                inputs.append(inport)
+            elif (inport_data[inport] == 2):
+                parameters[inport] = "bool"
+            else:
+                parameters[inport] = "float"
+
+        for outport in outport_data:
+            outports.append(outport)
+        
+
+        return [inputs, parameters, outports]
+
+
+def generate_model_integration(model, parameters, inputs, outports, output_include, output_src):
+    header_template = Template(filename="matlab_model/MatlabModelIntegration.hpp.mako")
+    header_rendered = header_template.render(model=model, parameters=parameters, inputs=inputs, outports=outports)
+
+    src_template = Template(filename="matlab_model/MatlabModelIntegration.cpp.mako")
+    src_rendered = src_template.render(model=model, parameters=parameters, inputs=inputs, outports=outports)
+
+    integration_header_fpath = os.path.join(output_include, model + '_MatlabModel.hpp')
+    with open(integration_header_fpath, 'w') as f:
+        f.write(header_rendered)
+
+    print(f"{model}_MatlabModel.hpp generated at '{integration_header_fpath}'.")
+
+    inegration_src_fpath = os.path.join(output_src, model + "_MatlabModel.cpp")
+    with open(inegration_src_fpath, 'w') as f:
+        f.write(src_rendered)
+
+    print(f"{model}_MatlabModel.hpp generated at '{inegration_src_fpath}'.")
+
 if __name__ == "__main__":
     if len(sys.argv) < 2:
         print("Usage: python process_simulink_codegen.py <output_directory>")
@@ -156,3 +201,17 @@ if __name__ == "__main__":
     # Generate the CMakeLists.txt with the collected libraries
     generate_cmakelists(libraries, output_directory)
     copy_directory('cmake/', os.path.join(output_directory, 'cmake'))
+
+    # Generate and move state estimation files
+    state_estimation_include = output_directory + "/matlab_model/include"
+    state_estimation_src = output_directory + "/matlab_model/src"
+    os.makedirs(state_estimation_include, exist_ok=True)
+    os.makedirs(state_estimation_src, exist_ok=True)
+    shutil.copy("matlab_model/MatlabModel.hpp", state_estimation_include)
+    for file in files:
+        # Use inport data to generate header and src matlab math
+        inportInfoJsonName = file.strip(".zip") + "_inport_info.json"
+        inputs, parameters, outports = parse_inport_json(inportInfoJsonName)
+        generate_model_integration(model=file.strip(".zip"), parameters=parameters, inputs=inputs, outports=outports, output_include=state_estimation_include, output_src=state_estimation_src)
+        os.makedirs("proto_outputs", exist_ok=True)
+        json_to_proto.run(inportInfoJsonName, "proto_outputs/" + file.strip(".zip") + "_estimation_msgs.proto", file.strip(".zip"))

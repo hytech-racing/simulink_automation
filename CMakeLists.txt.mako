@@ -5,13 +5,22 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(CMAKE_INCLUDE_HEADERS_IN_COMPILE_COMMANDS ON)
 
-include(GNUInstallDirs)
+find_package(drivebrain_core REQUIRED)
+find_package(simulink_automation_msgs_proto_cpp REQUIRED)
+find_package(protobuf REQUIRED)
 
+include(GNUInstallDirs)
 <%!
 def format_sources(sources):
     return " ".join(sources)
 %>
-
+<%!
+def format_libraries(libraries):
+    library_names = []
+    for library in libraries:
+      library_names.append(library['name'])
+    return " ".join(library_names)
+%>
 # Loop over libraries to create shared libraries and set up install rules
 % for library in libraries:
 add_library(${library['name']} SHARED
@@ -23,22 +32,44 @@ target_include_directories(${library['name']} PUBLIC
     <%text>$<INSTALL_INTERFACE</%text>:${library['name']}/include>
 )
 
-
-install(
-    TARGETS ${library['name']}
-<%text>    EXPORT codegenTargets
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-</%text>
-)
-
 install(
     DIRECTORY ${library['name']}/include/
     DESTINATION ${library['name']}/include
 )
-
 % endfor
+
+# State estimation header library
+add_library(matlab_model SHARED
+% for library in libraries:
+    matlab_model/src/${library['name']}_MatlabModel.cpp
+% endfor
+)
+
+target_include_directories(matlab_model PUBLIC 
+  <%text>$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/</%text>matlab_model/include>
+  <%text>$<INSTALL_INTERFACE</%text>:matlab_model/include>)
+
+target_link_libraries(matlab_model PUBLIC
+    % for library in libraries: 
+    ${library['name']}
+    %endfor
+    drivebrain_core::drivebrain_core
+    protobuf::libprotobuf
+    simulink_automation_msgs_proto_cpp::simulink_automation_msgs_proto_cpp
+)
+
+install(
+    TARGETS ${format_libraries(libraries)} matlab_model
+<%text>    EXPORT codegenTargets
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}</%text>
+)
+
+install(
+    DIRECTORY matlab_model/include/
+    DESTINATION matlab_model/include
+)
 
 <%text>
 # Install target export
@@ -60,3 +91,4 @@ install(FILES
   DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/codegen
 )
 </%text>
+

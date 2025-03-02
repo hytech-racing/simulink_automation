@@ -1,0 +1,17 @@
+HyTech_Sim/
+.venv/
+slprg/
+model_processing/
+slprj/
+Tire_Model_Codegen_ert_rtw/
+HT09_Linear_Vehicle_Model.slxc
+Tire_Model_Codegen.slxc
+Tire_Model_Codegen.zip/
+Tire_Model_Codegen.zip
+build
+build/
+Tire_Model_Codegen_inport_info.json
+__pycache__/
+__pycache__
+proto_outputs/
+proto_outputs

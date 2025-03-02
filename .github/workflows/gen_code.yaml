@@ -1,6 +1,7 @@
 name: run gen code on matlab runner on dispatch from simulink repo
 on:
-  workflow_dispatch
+  workflow_dispatch: 
+  repository_dispatch: 
 
 env:
   MLM_LICENSE_TOKEN: ${{ secrets.MLM_LICENSE_TOKEN }} # Defined as a secret in GitHub conf
@@ -41,27 +42,27 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: hytech-racing/HyTech_sim
-          token: ${{ secrets.KRISHS_PAT }}
+          token: ${{ secrets.KRISHS_PAT }} 
           path: HyTech_sim
           ref: 'main'
-
-      - name: Debugging
-        run: |
-          ls
 
       - name: Run matlab script
         uses: matlab-actions/run-command@v2
         with:
           command: gencode_v2
       
-      - name: Run Python script
+      - name: Generate cpp lib script
         run: |
           mkdir source_code
           python process_simulink_codegen.py source_code
 
-      - name: Create release artifact
+      - name: Create cpp lib release artifact
         run: | 
           tar -czvf matlab_math.tar.gz source_code
+
+      - name: Create proto release artifact
+        run: | 
+          tar -czvf proto_outputs.tar.gz proto_outputs
 
       - name: Generate release tag
         id: tag
@@ -76,3 +77,5 @@ jobs:
           tag_name: ${{ steps.tag.outputs.release_tag }}
           files: |
             matlab_math.tar.gz
+            proto_outputs.tar.gz
+            
