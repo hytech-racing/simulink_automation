@@ -4,7 +4,7 @@ addpath(genpath(rootFolder));  % Add all sub-folders
 
 HT09_Vehicle_Parameters;
 
-modelList = {'Tire_Model_Codegen'}; 
+modelList = {'Tire_Model_Codegen', 'PI_TV_Controller'}; 
 close all;
 
 % Cell array to store the generated zip file names
