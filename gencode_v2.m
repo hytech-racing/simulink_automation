@@ -2,22 +2,45 @@
 rootFolder = pwd;  % Get the current folder
 addpath(genpath(rootFolder));  % Add all sub-folders
 
-HT09_Vehicle_Parameters;
+% HT09_Vehicle_Parameters;
+load_params;
 
-modelList = {'Tire_Model_Codegen', 'PI_TV_Controller'}; 
-close all;
+fname = 'models.json'; 
+fid = fopen(fname); 
+raw = fread(fid,inf); 
+str = char(raw'); 
+fclose(fid); 
+models_json = jsondecode(str);
+
+
+% load the standard codegen config
+load('hytech_codegen_config.mat', 'hytech_codegen_config');
+
+controllers = models_json.controllers;
 
 % Cell array to store the generated zip file names
 zipFiles = {};
 % Loop over each model
-for i = 1:length(modelList)
-    modelName = modelList{i}; % Get the model name from the list
+for i = 1:length(controllers)
+    modelName = controllers{i}; % Get the model name from the list
     
     fprintf('Building model: %s\n', modelName); % Display progress
     
     % Load the Simulink model
     load_system(modelName);
     
+    % Remove any existing config set with the same name as the standard
+    % codegen config
+    
+    % Attach and activate it on the target model
+    %activeConfig = getActiveConfigSet(modelName);
+    %detachConfigSet(modelName, activeConfig.Name);
+    attachConfigSet(modelName, Configuration);  % true = make it active
+    setActiveConfigSet(modelName, 'hytech_codegen_config');
+
+
+    fprintf('attached config');
+
     % Build the model
     slbuild(modelName)
     codeInfoPath = fullfile(pwd, [modelName, '_ert_rtw', filesep, 'codeInfo.mat']); % Adjust the path as needed

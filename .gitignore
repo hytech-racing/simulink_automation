@@ -15,3 +15,6 @@ __pycache__/
 __pycache__
 proto_outputs/
 proto_outputs
+*.zip
+*_inport_info.json
+zipped_files.json
