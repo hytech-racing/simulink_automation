@@ -1,7 +1,8 @@
 name: run gen code on matlab runner on dispatch from simulink repo
 on:
   workflow_dispatch: 
-  repository_dispatch: 
+  repository_dispatch:
+  push:
 
 env:
   MLM_LICENSE_TOKEN: ${{ secrets.MLM_LICENSE_TOKEN }} # Defined as a secret in GitHub conf
@@ -11,10 +12,8 @@ jobs:
     name: Generate source code from simulink models and create artifact
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
+      - name: Checkout repository simulink_automation
         uses: actions/checkout@v4
-        with:
-          ref: feature/model_processing_addition # For testing
 
       - name: Set up MATLAB
         uses: matlab-actions/setup-matlab@v2
@@ -37,45 +36,50 @@ jobs:
       - name: Install Mako
         run: |
           pip install mako
-      
-      - name: Checkout the HyTech_sim repo
-        uses: actions/checkout@v4
-        with:
-          repository: hytech-racing/HyTech_sim
-          token: ${{ secrets.KRISHS_PAT }} 
-          path: HyTech_sim
-          ref: 'main'
 
       - name: Run matlab script
         uses: matlab-actions/run-command@v2
         with:
-          command: gencode_v2
+          command: disp("hello")
       
-      - name: Generate cpp lib script
-        run: |
-          mkdir source_code
-          python process_simulink_codegen.py source_code
+      # - name: Checkout the HyTech_sim repo
+      #   uses: actions/checkout@v4
+      #   with:
+      #     repository: hytech-racing/HyTech_sim
+      #     token: ${{ secrets.KRISHS_PAT }} 
+      #     path: HyTech_sim
+      #     ref: 'main'
 
-      - name: Create cpp lib release artifact
-        run: | 
-          tar -czvf matlab_math.tar.gz source_code
+      # - name: Run matlab script
+      #   uses: matlab-actions/run-command@v2
+      #   with:
+      #     command: gencode_v2
+      
+      # - name: Generate cpp lib script
+      #   run: |
+      #     mkdir source_code
+      #     python process_simulink_codegen.py source_code
 
-      - name: Create proto release artifact
-        run: | 
-          tar -czvf proto_outputs.tar.gz proto_outputs
+      # - name: Create cpp lib release artifact
+      #   run: | 
+      #     tar -czvf matlab_math.tar.gz source_code
 
-      - name: Generate release tag
-        id: tag
-        run: |
-          echo "::set-output name=release_tag::CodeGen_$(date +"%Y.%m.%d_%H-%M")"
+      # - name: Create proto release artifact
+      #   run: | 
+      #     tar -czvf proto_outputs.tar.gz proto_outputs
 
-      - name: Release
-        uses: softprops/action-gh-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ steps.tag.outputs.release_tag }}
-          files: |
-            matlab_math.tar.gz
-            proto_outputs.tar.gz
+      # - name: Generate release tag
+      #   id: tag
+      #   run: |
+      #     echo "::set-output name=release_tag::CodeGen_$(date +"%Y.%m.%d_%H-%M")"
+
+      # - name: Release
+      #   uses: softprops/action-gh-release@v1
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   with:
+      #     tag_name: ${{ steps.tag.outputs.release_tag }}
+      #     files: |
+      #       matlab_math.tar.gz
+      #       proto_outputs.tar.gz
             
