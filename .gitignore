@@ -18,3 +18,4 @@ proto_outputs
 *.zip
 *_inport_info.json
 zipped_files.json
+source_code/

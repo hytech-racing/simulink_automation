@@ -190,10 +190,11 @@ if __name__ == "__main__":
             # Collect library information
             library_name = Path(file).stem  # Use the zip file name as library name
             sources = []
-            for dir in directories:
+            # for dir in directories:
                 # Assuming that .cpp files are in the src directory
-                src_dir = os.path.join(extraction_path, 'src')
-                sources.extend(remove_parent_directory(os.path.join(src_dir, f)) for f in os.listdir(src_dir) if f.endswith('.cpp'))
+            src_dir = os.path.join(extraction_path, 'src')
+            sources_to_ext = (remove_parent_directory(os.path.join(src_dir, f)) for f in os.listdir(src_dir) if f.endswith('.cpp'))
+            sources.extend(sources_to_ext)
             libraries.append({"name": library_name, "sources": sources})
         else:
             print("Failed to extract and process the zip file.")

@@ -1,6 +1,0 @@
-@PACKAGE_INIT@
-include("${CMAKE_CURRENT_LIST_DIR}/drivebrain_coreTargets.cmake")
-
-check_required_components(drivebrain_core)
-check_required_components(protobuf)
-check_required_components(simulink_automation_msgs_proto_cpp)
