@@ -2,19 +2,20 @@
 #define __${model.upper()}_MATLABMODEL_H__
 
 // stuff from drivebrain_core
-#include <Controller.hpp>
-#include <Configurable.hpp>
+
 #include <VehicleDataTypes.hpp>
+
+#include <google/protobuf/message.h>
 
 #include <unordered_map>
 #include <mutex> 
+#include <memory>
 
 #include "${model}.h"
 #include "${model}_estimation_msgs.pb.h"
 
 #include <MatlabModel.hpp>
 
-#include <memory>
 
 
 namespace estimation
@@ -25,7 +26,7 @@ namespace estimation
         % endfor
     };
 
-    class ${model}_MatlabModel : public control::Controller<core::ControllerOutput, core::VehicleState>, public core::common::Configurable {
+    class ${model}_MatlabModel : public MatlabModel {
 
         public:
 

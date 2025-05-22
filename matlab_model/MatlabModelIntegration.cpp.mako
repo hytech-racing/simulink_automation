@@ -87,7 +87,9 @@ ${model}::ExtY_${model}_T estimation::${model}_MatlabModel::evaluate_estimator($
     ${model}_model.setExternalInputs(&_model_inputs);
     ${model}_model.step();
     ${model}::ExtY_${model}_T outputs = ${model}_model.getExternalOutputs();
+    auto msg_to_log = get_proto_msg(outputs);
 
+    this->log(msg_to_log); // from base Loggable
     return outputs;
 }
 

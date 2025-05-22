@@ -178,6 +178,13 @@ def generate_model_integration(model, parameters, inputs, outports, output_inclu
 
     print(f"{model}_MatlabModel.hpp generated at '{inegration_src_fpath}'.")
 
+def generate_matlab_model_add_helper(model_names, output_dir):
+    model_add_temp = Template(filename='matlab_model/MatlabModelAddHelper.hpp.mako')
+    rendered_reg_templt = model_add_temp.render(model_name_length=len(model_names), model_names=model_names)
+    proto_reg_helper = os.path.join(output_dir, 'MatlabModelAddHelper.hpp')
+    with open(proto_reg_helper, 'w') as f:
+        f.write(rendered_reg_templt)
+
 if __name__ == "__main__":
     if len(sys.argv) < 2:
         print("Usage: python process_simulink_codegen.py <output_directory>")
@@ -238,3 +245,4 @@ if __name__ == "__main__":
         proto_file_names.append(pb_proto_name)
 
     generate_matlab_model_proto_reg_helper(proto_file_names, gend_include_dir)
+    generate_matlab_model_add_helper(model_names, gend_include_dir) # integration helper template for drivebrainapp
