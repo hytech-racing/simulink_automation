@@ -15,9 +15,9 @@ void estimation::${model}_MatlabModel::handle_parameter_updates(const std::unord
 def to_lower_case(s):
     return s.lower()
 %>
-std::shared_ptr<${model}_estimation_msgs::Outports> estimation::${model}_MatlabModel::get_proto_msg(${model}::ExtY_${model}_T res)
+std::shared_ptr<${model}_estimation_msgs::${model}_Outports> estimation::${model}_MatlabModel::get_proto_msg(${model}::ExtY_${model}_T res)
 { 
-    auto msg = std::make_shared<${model}_estimation_msgs::Outports>();
+    auto msg = std::make_shared<${model}_estimation_msgs::${model}_Outports>();
     % for outport in outports: 
     msg->set_${to_lower_case(outport)}(res.${outport});
     % endfor
@@ -25,7 +25,7 @@ std::shared_ptr<${model}_estimation_msgs::Outports> estimation::${model}_MatlabM
 }
 
 
-estimation::${model}_MatlabModel::${model}_MatlabModel(core::JsonFileHandler &json_file_handler) : Configurable(json_file_handler, "${model}_MatlabModel") {
+estimation::${model}_MatlabModel::${model}_MatlabModel(core::JsonFileHandler &json_file_handler) : MatlabModel(json_file_handler, "${model}_MatlabModel") {
     _model_inputs = { };
 }
 <%!

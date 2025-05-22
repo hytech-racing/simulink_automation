@@ -3,9 +3,13 @@
 #include <Controller.hpp>
 
 #include <memory>
+#include <vector>
+#include <string>
+#include <stdexcept>
+	
 
 % for model_class in model_names:
-#include "${model_class}_MatlabModel.hpp";
+#include "${model_class}_MatlabModel.hpp"
 % endfor
 
 % for model_class in model_names:
@@ -18,7 +22,7 @@ namespace matlab_model_gen
 
 std::vector<std::shared_ptr<MatlabModel>> create_controllers(core::JsonFileHandler & conf, std::vector<std::weak_ptr<core::common::Configurable>> & conf_comps)
 {
-    std::vector<std::shared_ptr<MatlabModel>>, ${model_name_length}> vec;
+    std::vector<std::shared_ptr<MatlabModel>> vec{};
     % for i, model in enumerate(model_names):
     auto ${model}_controller_inst = std::make_shared<estimation::${model}_MatlabModel>(conf);
     if (!${model}_controller_inst->init()) {

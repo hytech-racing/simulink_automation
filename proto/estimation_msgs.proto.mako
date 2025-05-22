@@ -1,7 +1,7 @@
 syntax = "proto3";
 package ${model}_estimation_msgs;
 
-message Outports
+message ${model}_Outports
 {
     % for outport in outports: 
     ${render_outport(outports, outport, count)}

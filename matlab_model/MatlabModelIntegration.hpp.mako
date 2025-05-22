@@ -41,7 +41,7 @@ namespace estimation
 
             void handle_parameter_updates(const std::unordered_map<std::string, core::common::Configurable::ParamTypes> &new_param_map);
 
-            std::shared_ptr<${model}_estimation_msgs::Outports> get_proto_msg(${model}::ExtY_${model}_T res);
+            std::shared_ptr<${model}_estimation_msgs::${model}_Outports> get_proto_msg(${model}::ExtY_${model}_T res);
 
             ${model}::ExtY_${model}_T evaluate_estimator(${model}_inputs &new_inputs);
 
