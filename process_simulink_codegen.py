@@ -109,11 +109,12 @@ def organize_files(base_path):
                 print(f"Removed empty directory '{dir_path}'")
             except OSError:
                 pass
+
 def format_sources(sources):
     return " ".join(sources)
 
 def remove_parent_directory(path):
-    return os.path.join(*path.split(os.sep)[1:])
+    return os.path.join(*path.split(os.sep)[2:])
 
 def generate_cmakelists(libraries, output_dir):
     template = Template(filename='CMakeLists.txt.mako')
@@ -124,6 +125,14 @@ def generate_cmakelists(libraries, output_dir):
         f.write(rendered)
     
     print(f"CMakeLists.txt generated at '{cmake_file_path}'.")
+
+def generate_matlab_model_proto_reg_helper(proto_file_names, output_dir):
+    proto_reg_template = Template(filename='matlab_model/MatlabModelProtoRegHelper.hpp.mako')
+    rendered_reg_templt = proto_reg_template.render(proto_file_names = proto_file_names)
+    proto_reg_helper = os.path.join(output_dir, 'MatlabModelProtoRegHelper.hpp')
+    with open(proto_reg_helper, 'w') as f:
+        f.write(rendered_reg_templt)
+
 
 def parse_inport_json(json_file):
     with open(json_file, 'r') as f:
@@ -180,10 +189,12 @@ if __name__ == "__main__":
     files = read_zipped_files('zipped_files.json') 
     libraries = []  # Store library info for CMake
 
+
+    cpp_lib_output_dir = os.path.join(output_directory, 'source_code')
     for file in files:
-        extraction_path = unzip_and_rename(file, output_directory)
+        extraction_path = unzip_and_rename(file, cpp_lib_output_dir)
         if extraction_path:
-            remove_specific_files(extraction_path, ["ert_main.cpp", "CMakeLists.txt"])
+            remove_specific_files(extraction_path, ["ert_main.cpp", "CMakeLists.txt", "rt_cppclass_main.cpp"])
             directories = list_directories(extraction_path)
             organize_files(extraction_path)  # Organize files into src and include folders
             
@@ -200,19 +211,30 @@ if __name__ == "__main__":
             print("Failed to extract and process the zip file.")
 
     # Generate the CMakeLists.txt with the collected libraries
-    generate_cmakelists(libraries, output_directory)
-    copy_directory('cmake/', os.path.join(output_directory, 'cmake'))
+
+    generate_cmakelists(libraries, cpp_lib_output_dir)
+    copy_directory('cmake/', os.path.join(cpp_lib_output_dir, 'cmake'))
 
     # Generate and move state estimation files
-    state_estimation_include = output_directory + "/matlab_model/include"
-    state_estimation_src = output_directory + "/matlab_model/src"
-    os.makedirs(state_estimation_include, exist_ok=True)
-    os.makedirs(state_estimation_src, exist_ok=True)
-    shutil.copy("matlab_model/MatlabModel.hpp", state_estimation_include)
+    gend_include_dir = cpp_lib_output_dir + "/matlab_model/include"
+    gend_src_dir = cpp_lib_output_dir + "/matlab_model/src"
+    os.makedirs(gend_include_dir, exist_ok=True)
+    os.makedirs(gend_src_dir, exist_ok=True)
+
+    model_names =[]
     for file in files:
+        model_names.append(file.strip(".zip"))
+
+    shutil.copy("matlab_model/MatlabModel.hpp", gend_include_dir)
+    proto_file_names = []
+    for model in model_names:
         # Use inport data to generate header and src matlab math
-        inportInfoJsonName = file.strip(".zip") + "_inport_info.json"
+        inportInfoJsonName = model + "_inport_info.json"
         inputs, parameters, outports = parse_inport_json(inportInfoJsonName)
-        generate_model_integration(model=file.strip(".zip"), parameters=parameters, inputs=inputs, outports=outports, output_include=state_estimation_include, output_src=state_estimation_src)
-        os.makedirs("proto_outputs", exist_ok=True)
-        json_to_proto.run(inportInfoJsonName, "proto_outputs/" + file.strip(".zip") + "_estimation_msgs.proto", file.strip(".zip"))
+        generate_model_integration(model=model, parameters=parameters, inputs=inputs, outports=outports, output_include=gend_include_dir, output_src=gend_src_dir)
+        os.makedirs(output_directory+"/proto_outputs", exist_ok=True)
+        pb_proto_name = model + "_estimation_msgs.proto"
+        json_to_proto.run(inportInfoJsonName, output_directory+"/proto_outputs/" + pb_proto_name, model)
+        proto_file_names.append(pb_proto_name)
+
+    generate_matlab_model_proto_reg_helper(proto_file_names, gend_include_dir)

@@ -7,7 +7,6 @@ void estimation::${model}_MatlabModel::handle_parameter_updates(const std::unord
     if (auto pval = std::get_if<${parameters[parameter]}>(&new_param_map.at("${parameter}"))) {
         std::unique_lock lk(_parameter_mutex);
         _parameters.${parameter} = *pval;
-        std::cout << "Setting new ${parameter}" << std::endl;
     }
     % endfor
 }
@@ -16,9 +15,9 @@ void estimation::${model}_MatlabModel::handle_parameter_updates(const std::unord
 def to_lower_case(s):
     return s.lower()
 %>
-std::shared_ptr<${model}_estimation_msgs::Outports> estimation::${model}_MatlabModel::update_proto_info(${model}::ExtY_${model}_T res, ${model}_estimation_msgs::Outports* msg_in)
+std::shared_ptr<${model}_estimation_msgs::Outports> estimation::${model}_MatlabModel::get_proto_msg(${model}::ExtY_${model}_T res)
 { 
-    std::shared_ptr<${model}_estimation_msgs::Outports> msg = std::make_shared(msg_in);
+    auto msg = std::make_shared<${model}_estimation_msgs::Outports>();
     % for outport in outports: 
     msg->set_${to_lower_case(outport)}(res.${outport});
     % endfor
@@ -26,8 +25,7 @@ std::shared_ptr<${model}_estimation_msgs::Outports> estimation::${model}_MatlabM
 }
 
 
-estimation::${model}_MatlabModel::${model}_MatlabModel(core::Logger &logger, core::JsonFileHandler &json_file_handler, bool &construction_failed) : Configurable(logger, json_file_handler, "${model}_MatlabModel") {
-    construction_failed = !init();
+estimation::${model}_MatlabModel::${model}_MatlabModel(core::JsonFileHandler &json_file_handler) : Configurable(json_file_handler, "${model}_MatlabModel") {
     _model_inputs = { };
 }
 <%!
@@ -63,13 +61,13 @@ bool estimation::${model}_MatlabModel::init() {
             ${format_parameter_derefencering(parameters)}
         };
         param_update_handler_sig.connect(boost::bind(&${model}_MatlabModel::handle_parameter_updates, this, std::placeholders::_1));
-
+        set_configured();
         return true;
     }
 
 }
 
-${model}::ExtY_${model}_T estimation::${model}_MatlabModel::evaluate_estimator(inputs &new_inputs) {
+${model}::ExtY_${model}_T estimation::${model}_MatlabModel::evaluate_estimator(${model}_inputs &new_inputs) {
     parameters curr_params;
     {
         std::unique_lock lk(_parameter_mutex);
@@ -91,6 +89,46 @@ ${model}::ExtY_${model}_T estimation::${model}_MatlabModel::evaluate_estimator(i
     ${model}::ExtY_${model}_T outputs = ${model}_model.getExternalOutputs();
 
     return outputs;
+}
+
+core::ControllerOutput estimation::${model}_MatlabModel::step_controller(const core::VehicleState &in)
+{
+    ${model}_inputs in_data = {};
+
+% for input in inputs:
+    % if input == "vx_m_s":
+    in_data.vx_m_s = in.current_body_vel_ms.x;
+    % elif input == "wz_rad_s":
+    in_data.wz_rad_s = in.current_angular_rate_rads.z;
+    % elif input == "delta_deg":
+    in_data.delta_deg = in.steering_angle_deg;
+    % elif input == "accel":
+    in_data.accel = in.input.requested_accel;
+    % elif input == "brake":
+    in_data.brake = in.input.requested_brake;
+    % endif
+% endfor
+    
+    core::SpeedControlOut type_set = {};
+    core::ControllerOutput cmd_out = {};
+    cmd_out.out = type_set;
+    auto& speed_out = std::get<core::SpeedControlOut>(cmd_out.out);
+    speed_out = {};
+
+    auto result = evaluate_estimator(in_data);
+
+    speed_out.desired_rpms.FL = result.speed_setpoint_FL;
+    speed_out.desired_rpms.FR = result.speed_setpoint_FR;
+    speed_out.desired_rpms.RL = result.speed_setpoint_RL;
+    speed_out.desired_rpms.RR = result.speed_setpoint_RR;
+    speed_out.torque_lim_nm.FL = result.torq_FL;
+    speed_out.torque_lim_nm.FR = result.torq_FR;
+    speed_out.torque_lim_nm.RL = result.torq_RL;
+    speed_out.torque_lim_nm.RR = result.torq_RR;
+
+    cmd_out.out = speed_out;
+
+    return cmd_out;
 }
 
 

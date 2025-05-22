@@ -13,9 +13,9 @@ fclose(fid);
 models_json = jsondecode(str);
 
 
-% load the standard codegen config
-load('hytech_codegen_config.mat', 'hytech_codegen_config');
-
+% load the standard codegen 
+load('hytech_codegen_config.mat');
+%%
 controllers = models_json.controllers;
 
 % Cell array to store the generated zip file names

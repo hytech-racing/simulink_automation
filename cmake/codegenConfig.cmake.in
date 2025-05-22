@@ -7,4 +7,8 @@
 
 include("${CMAKE_CURRENT_LIST_DIR}/codegenTargets.cmake")
 
+find_dependency(simulink_automation_msgs_proto_cpp)
+find_dependency(drivebrain_core)
+find_dependency(protobuf)
+
 check_required_components(codegen)

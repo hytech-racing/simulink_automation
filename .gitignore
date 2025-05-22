@@ -19,3 +19,5 @@ proto_outputs
 *_inport_info.json
 zipped_files.json
 source_code/
+gen_rel.tar.gz
+.vscode/

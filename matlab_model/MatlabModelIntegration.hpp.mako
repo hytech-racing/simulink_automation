@@ -1,43 +1,51 @@
 #ifndef __${model.upper()}_MATLABMODEL_H__
 #define __${model.upper()}_MATLABMODEL_H__
 
+// stuff from drivebrain_core
+#include <Controller.hpp>
+#include <Configurable.hpp>
+#include <VehicleDataTypes.hpp>
+
 #include <unordered_map>
 #include <mutex> 
+
 #include "${model}.h"
-#include <Configurable.hpp>
-#include <MatlabModel.hpp>
-#include <memory>
 #include "${model}_estimation_msgs.pb.h"
+
+#include <MatlabModel.hpp>
+
+#include <memory>
+
 
 namespace estimation
 {
-    class ${model}_MatlabModel : public MatlabModel, public core::common::Configurable {
+    struct ${model}_inputs {
+        % for input in inputs:
+        float ${input};
+        % endfor
+    };
+
+    class ${model}_MatlabModel : public control::Controller<core::ControllerOutput, core::VehicleState>, public core::common::Configurable {
 
         public:
-
-            struct inputs {
-                % for input in inputs:
-                float ${input};
-                % endfor
-            };
 
             struct parameters {
                 % for parameter in parameters:
                 ${parameters[parameter]} ${parameter};
                 % endfor
             };
+            bool init() override final;
 
-            ${model}_MatlabModel(core::Logger &logger, core::JsonFileHandler &json_file_handler, bool &construction_failed);
+            ${model}_MatlabModel(core::JsonFileHandler &json_file_handler);
 
             void handle_parameter_updates(const std::unordered_map<std::string, core::common::Configurable::ParamTypes> &new_param_map);
 
-            std::shared_ptr<${model}_estimation_msgs::Outports> update_proto_info(${model}::ExtY_${model}_T res, ${model}_estimation_msgs::Outports* msg_in);
+            std::shared_ptr<${model}_estimation_msgs::Outports> get_proto_msg(${model}::ExtY_${model}_T res);
 
-            ${model}::ExtY_${model}_T evaluate_estimator(inputs &new_inputs);
+            ${model}::ExtY_${model}_T evaluate_estimator(${model}_inputs &new_inputs);
 
-            bool init();
 
-            std::unordered_map<std::string, float> &get_params();
+            core::ControllerOutput step_controller(const core::VehicleState &in) override final;
 
         private: 
             ${model}::ExtU_${model}_T _model_inputs;
