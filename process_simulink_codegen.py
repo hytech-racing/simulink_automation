@@ -160,10 +160,10 @@ def parse_inport_json(json_file):
 
 
 def generate_model_integration(model, parameters, inputs, outports, output_include, output_src):
-    header_template = Template(filename="matlab_model/MatlabModelIntegration.hpp.mako")
+    header_template = Template(filename="matlab_model/MatlabControllerModelIntegration.hpp.mako")
     header_rendered = header_template.render(model=model, parameters=parameters, inputs=inputs, outports=outports)
 
-    src_template = Template(filename="matlab_model/MatlabModelIntegration.cpp.mako")
+    src_template = Template(filename="matlab_model/MatlabControllerModelIntegration.cpp.mako")
     src_rendered = src_template.render(model=model, parameters=parameters, inputs=inputs, outports=outports)
 
     integration_header_fpath = os.path.join(output_include, model + '_MatlabModel.hpp')
