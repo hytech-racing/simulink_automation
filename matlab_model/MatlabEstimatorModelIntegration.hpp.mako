@@ -1,9 +1,10 @@
-#ifndef __${model.upper()}_MATLABMODEL_H__
-#define __${model.upper()}_MATLABMODEL_H__
+#ifndef __${model.upper()}_MATLABESTIMMODEL_H__
+#define __${model.upper()}_MATLABESTIMMODEL_H__
 
 // stuff from drivebrain_core
 
 #include <VehicleDataTypes.hpp>
+#include <Estimator.hpp>
 
 #include <google/protobuf/message.h>
 
@@ -14,11 +15,9 @@
 #include "${model}.h"
 #include "${model}_estimation_msgs.pb.h"
 
-#include "EstimatorTypes.hpp"
-#include "EstimatorManager.hpp"
+#include <MatlabEstimModel.hpp>
 
-#include <MatlabModel.hpp>
-
+#include <EstimatorTypes.hpp>
 
 namespace estimation
 {
@@ -28,7 +27,8 @@ namespace estimation
         % endfor
     };
 
-    class ${model}_MatlabModel : public MatlabModel {
+    class ${model}_MatlabEstimModel : public MatlabEstimModel,
+                                 public Estimator<${model}_output_t, core::VehicleState>{
 
         public:
 
@@ -39,7 +39,7 @@ namespace estimation
             };
             bool init() override final;
 
-            ${model}_MatlabModel(core::JsonFileHandler &json_file_handler, std::shared_ptr<EstimatorManager> estim_manager);
+            ${model}_MatlabEstimModel(core::JsonFileHandler &json_file_handler);
 
             void handle_parameter_updates(const std::unordered_map<std::string, core::common::Configurable::ParamTypes> &new_param_map);
 
@@ -48,15 +48,10 @@ namespace estimation
             ${model}::ExtY_${model}_T evaluate_estimator(${model}_inputs &new_inputs);
 
 
-            core::ControllerOutput step_controller(const core::VehicleState &in) override final;
-
-            EstimatorOutputs_s get_latest_estimator_outputs();
+            ${model}_output_t estimation::${model}_MatlabEstimModel::step_estimator(const core::VehicleState &in) override final;
         private: 
             ${model}::ExtU_${model}_T _model_inputs;
             ${model} ${model}_model;
-            
-            std::shared_ptr<EstimatorManager> _estim_manager = nullptr;
-            
             parameters _parameters;
 
             std::mutex _parameter_mutex;

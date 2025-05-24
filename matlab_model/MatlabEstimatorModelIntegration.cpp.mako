@@ -1,7 +1,7 @@
 #include "${model}.h"
-#include "${model}_MatlabModel.hpp"
+#include "${model}_MatlabEstimModel.hpp"
 
-void estimation::${model}_MatlabModel::handle_parameter_updates(const std::unordered_map<std::string, core::common::Configurable::ParamTypes> &new_param_map) 
+void estimation::${model}_MatlabEstimModel::handle_parameter_updates(const std::unordered_map<std::string, core::common::Configurable::ParamTypes> &new_param_map) 
 {
     % for parameter in parameters:
     if (auto pval = std::get_if<${parameters[parameter]}>(&new_param_map.at("${parameter}"))) {
@@ -15,7 +15,7 @@ void estimation::${model}_MatlabModel::handle_parameter_updates(const std::unord
 def to_lower_case(s):
     return s.lower()
 %>
-std::shared_ptr<${model}_estimation_msgs::${model}_Outports> estimation::${model}_MatlabModel::get_proto_msg(${model}::ExtY_${model}_T res)
+std::shared_ptr<${model}_estimation_msgs::${model}_Outports> estimation::${model}_MatlabEstimModel::get_proto_msg(${model}::ExtY_${model}_T res)
 { 
     auto msg = std::make_shared<${model}_estimation_msgs::${model}_Outports>();
     % for outport in outports: 
@@ -25,7 +25,7 @@ std::shared_ptr<${model}_estimation_msgs::${model}_Outports> estimation::${model
 }
 
 
-estimation::${model}_MatlabModel::${model}_MatlabModel(core::JsonFileHandler &json_file_handler, std::shared_ptr<EstimatorManager> estim_manager) : MatlabModel(json_file_handler, "${model}_MatlabModel"), _estim_manager(estim_manager) {
+estimation::${model}_MatlabEstimModel::${model}_MatlabEstimModel(core::JsonFileHandler &json_file_handler) : MatlabModel(json_file_handler, "${model}_MatlabEstimModel") {
     _model_inputs = { };
 }
 <%!
@@ -45,17 +45,12 @@ def format_parameter_derefencering(parameters):
             frm += "*" + parameter_list[i] + ","
     return frm
 %>
-bool estimation::${model}_MatlabModel::init() {
-    
-    if(!_estim_manager)
-    {
-        return false;
-    }
 
+bool estimation::${model}_MatlabEstimModel::init() {
     % for parameter in parameters:
     auto ${parameter} = get_live_parameter<${parameters[parameter]}>("${parameter}");
     % endfor
-    
+
     if (!(${format_params_check(parameters)})) 
     {
         return false;
@@ -73,7 +68,7 @@ bool estimation::${model}_MatlabModel::init() {
 
 }
 
-${model}::ExtY_${model}_T estimation::${model}_MatlabModel::evaluate_estimator(${model}_inputs &new_inputs) {
+${model}::ExtY_${model}_T estimation::${model}_MatlabEstimModel::evaluate_estimator(${model}_inputs &new_inputs) {
     parameters curr_params;
     {
         std::unique_lock lk(_parameter_mutex);
@@ -99,38 +94,20 @@ ${model}::ExtY_${model}_T estimation::${model}_MatlabModel::evaluate_estimator($
     return outputs;
 }
 
-core::ControllerOutput estimation::${model}_MatlabModel::step_controller(const core::VehicleState &in)
+${model}_output_t estimation::${model}_MatlabEstimModel::step_estimator(const core::VehicleState &in)
 {
     ${model}_inputs in_data = {};
 
-    EstimatorOutputs_s estimator_outputs = {};
-    if(_estim_manager)
-    {
-        estimator_outputs = _estim_manager->get_latest_estimation();
-    }
-    
     <%include file="model_input_include.mako"/>
     
-    core::SpeedControlOut type_set = {};
-    core::ControllerOutput cmd_out = {};
-    cmd_out.out = type_set;
-    auto& speed_out = std::get<core::SpeedControlOut>(cmd_out.out);
-    speed_out = {};
-
     auto result = evaluate_estimator(in_data);
+    
+    ${model}_output_t out = {};
 
-    speed_out.desired_rpms.FL = result.speed_setpoint_FL;
-    speed_out.desired_rpms.FR = result.speed_setpoint_FR;
-    speed_out.desired_rpms.RL = result.speed_setpoint_RL;
-    speed_out.desired_rpms.RR = result.speed_setpoint_RR;
-    speed_out.torque_lim_nm.FL = result.torq_FL;
-    speed_out.torque_lim_nm.FR = result.torq_FR;
-    speed_out.torque_lim_nm.RL = result.torq_RL;
-    speed_out.torque_lim_nm.RR = result.torq_RR;
-
-    cmd_out.out = speed_out;
-
-    return cmd_out;
+    % for outport in outports: 
+    out.${outport} = result.${outport};
+    % endfor 
+    return out;
 }
 
 

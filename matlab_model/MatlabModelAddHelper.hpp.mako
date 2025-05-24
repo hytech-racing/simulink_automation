@@ -20,11 +20,11 @@
 namespace matlab_model_gen
 {
 
-std::vector<std::shared_ptr<MatlabModel>> create_controllers(core::JsonFileHandler & conf, std::vector<std::weak_ptr<core::common::Configurable>> & conf_comps)
+std::vector<std::shared_ptr<MatlabModel>> create_controllers(core::JsonFileHandler & conf, std::vector<std::weak_ptr<core::common::Configurable>> & conf_comps, std::shared_ptr<EstimatorManager> estim_manager)
 {
     std::vector<std::shared_ptr<MatlabModel>> vec{};
     % for i, model in enumerate(model_names):
-    auto ${model}_controller_inst = std::make_shared<estimation::${model}_MatlabModel>(conf);
+    auto ${model}_controller_inst = std::make_shared<estimation::${model}_MatlabModel>(conf, estim_manager);
     if (!${model}_controller_inst->init()) {
         throw std::runtime_error("Failed to ${model}_MatlabModel controller");
     }
