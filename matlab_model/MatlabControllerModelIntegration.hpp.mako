@@ -14,7 +14,7 @@
 #include "${model}.h"
 #include "${model}_estimation_msgs.pb.h"
 
-#include "EstimatorTypes.hpp"
+#include "EstimatorOutputs.hpp"
 #include "EstimatorManager.hpp"
 
 #include <MatlabModel.hpp>
@@ -25,6 +25,9 @@ namespace estimation
     struct ${model}_inputs {
         % for input in inputs:
         float ${input};
+        % endfor
+        % for in_estim in estim_outputs:
+        float ${in_estim};
         % endfor
     };
 
@@ -39,7 +42,7 @@ namespace estimation
             };
             bool init() override final;
 
-            ${model}_MatlabModel(core::JsonFileHandler &json_file_handler, std::shared_ptr<EstimatorManager> estim_manager);
+            ${model}_MatlabModel(core::JsonFileHandler &json_file_handler, std::shared_ptr<estimation::EstimatorManager> estim_manager);
 
             void handle_parameter_updates(const std::unordered_map<std::string, core::common::Configurable::ParamTypes> &new_param_map);
 

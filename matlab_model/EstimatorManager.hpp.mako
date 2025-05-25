@@ -17,8 +17,6 @@
 
 // contains all of the simulink code gen estimators and provides their outputs
 
-namespace matlab_model_gen
-{
 namespace estimation
 {
 class EstimatorManager
@@ -26,7 +24,7 @@ class EstimatorManager
     public:
         EstimatorManager(core::JsonFileHandler &json_file_handler) :
             % for i, estim in enumerate(estimator_names):
-            _${estim}_inst(std::make_shared<${estim}_MatlabEstimModel>(json_file_handler))${',' if i < len(estimator_names) - 1 else ''}
+            _${estim}_inst(std::make_shared<::estimation::${estim}_MatlabEstimModel>(json_file_handler))${',' if i < len(estimator_names) - 1 else ''}
             % endfor
         {}
 
@@ -42,7 +40,7 @@ class EstimatorManager
             {
                 throw std::runtime_error("Failed to init ${estim}_MatlabModel estimator");
             }
-            configurable_comps_append.push_pack(_${estim}_inst);
+            configurable_comps_append.push_back(_${estim}_inst);
             % endfor
         }
         
@@ -57,7 +55,7 @@ class EstimatorManager
         void evaluate_all_estimators(const core::VehicleState &in) {
             _estim = {};
             % for estim, outputs in model_output_dict.items():
-            auto ${estim}_res = _${estim}_inst.step_estimator(in);
+            auto ${estim}_res = _${estim}_inst->step_estimator(in);
             % for field in outputs:
                 _estim.${estim}_${field} = ${estim}_res.${field}; 
             % endfor
@@ -66,10 +64,10 @@ class EstimatorManager
 
     private:
         % for estim in estimator_names:
-        std::shared_ptr<${estim}_MatlabEstimModel> _${estim}_inst;
+        std::shared_ptr<::estimation::${estim}_MatlabEstimModel> _${estim}_inst;
         % endfor
         
         EstimatorOutputs_s _estim = {};
 };
 }
-}
+

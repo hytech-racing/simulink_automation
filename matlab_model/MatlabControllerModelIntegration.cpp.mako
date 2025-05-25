@@ -25,7 +25,7 @@ std::shared_ptr<${model}_estimation_msgs::${model}_Outports> estimation::${model
 }
 
 
-estimation::${model}_MatlabModel::${model}_MatlabModel(core::JsonFileHandler &json_file_handler, std::shared_ptr<EstimatorManager> estim_manager) : MatlabModel(json_file_handler, "${model}_MatlabModel"), _estim_manager(estim_manager) {
+estimation::${model}_MatlabModel::${model}_MatlabModel(core::JsonFileHandler &json_file_handler, std::shared_ptr<estimation::EstimatorManager> estim_manager) : MatlabModel(json_file_handler, "${model}_MatlabModel"), _estim_manager(estim_manager) {
     _model_inputs = { };
 }
 <%!
@@ -85,6 +85,10 @@ ${model}::ExtY_${model}_T estimation::${model}_MatlabModel::evaluate_estimator($
     _model_inputs.${input} = new_inputs.${input};
     % endfor  
 
+    % for estim_in in estim_outputs:
+    _model_inputs.${estim_in} = new_inputs.${estim_in};
+    % endfor
+
     % for parameter in parameters:
     _model_inputs.${parameter} = curr_params.${parameter};
     % endfor
@@ -109,7 +113,7 @@ core::ControllerOutput estimation::${model}_MatlabModel::step_controller(const c
         estimator_outputs = _estim_manager->get_latest_estimation();
     }
     
-    <%include file="model_input_include.mako" args="model_type='control'"/>
+    <%include file="model_input_include.mako"/>
     
     core::SpeedControlOut type_set = {};
     core::ControllerOutput cmd_out = {};

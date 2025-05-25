@@ -17,7 +17,7 @@
 
 #include <MatlabEstimModel.hpp>
 
-#include <EstimatorTypes.hpp>
+#include <EstimatorOutputs.hpp>
 
 namespace estimation
 {
@@ -31,6 +31,7 @@ namespace estimation
     struct ${model}_output_t {
         % for output in outports:
         float ${output};
+        
         % endfor
     };
 
@@ -44,7 +45,7 @@ namespace estimation
                 ${parameters[parameter]} ${parameter};
                 % endfor
             };
-            
+            float get_dt_sec() {return 0.004; }
             bool init() override final;
 
             ${model}_MatlabEstimModel(core::JsonFileHandler &json_file_handler);
@@ -56,7 +57,7 @@ namespace estimation
             ${model}::ExtY_${model}_T evaluate_estimator(${model}_inputs &new_inputs);
 
 
-            ${model}_output_t estimation::${model}_MatlabEstimModel::step_estimator(const core::VehicleState &in) override final;
+            ${model}_output_t step_estimator(const core::VehicleState &in) override final;
         private: 
             ${model}::ExtU_${model}_T _model_inputs;
             ${model} ${model}_model;
