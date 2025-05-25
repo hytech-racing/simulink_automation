@@ -109,7 +109,7 @@ core::ControllerOutput estimation::${model}_MatlabModel::step_controller(const c
         estimator_outputs = _estim_manager->get_latest_estimation();
     }
     
-    <%include file="model_input_include.mako"/>
+    <%include file="model_input_include.mako" args="model_type='control'"/>
     
     core::SpeedControlOut type_set = {};
     core::ControllerOutput cmd_out = {};

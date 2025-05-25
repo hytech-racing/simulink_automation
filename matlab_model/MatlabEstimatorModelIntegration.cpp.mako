@@ -98,7 +98,7 @@ ${model}_output_t estimation::${model}_MatlabEstimModel::step_estimator(const co
 {
     ${model}_inputs in_data = {};
 
-    <%include file="model_input_include.mako"/>
+    <%include file="model_input_include.mako" args="model_type='estim'"/>
     
     auto result = evaluate_estimator(in_data);
     

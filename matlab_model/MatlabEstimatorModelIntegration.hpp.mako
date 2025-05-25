@@ -25,10 +25,17 @@ namespace estimation
         % for input in inputs:
         float ${input};
         % endfor
+    
+    };
+    
+    struct ${model}_output_t {
+        % for output in outports:
+        float ${output};
+        % endfor
     };
 
     class ${model}_MatlabEstimModel : public MatlabEstimModel,
-                                 public Estimator<${model}_output_t, core::VehicleState>{
+                                      public Estimator<${model}_output_t, core::VehicleState>{
 
         public:
 
@@ -37,6 +44,7 @@ namespace estimation
                 ${parameters[parameter]} ${parameter};
                 % endfor
             };
+            
             bool init() override final;
 
             ${model}_MatlabEstimModel(core::JsonFileHandler &json_file_handler);

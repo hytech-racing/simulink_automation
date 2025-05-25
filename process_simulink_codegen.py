@@ -3,9 +3,20 @@ import os
 import sys
 import json
 from mako.template import Template
+from mako.lookup import TemplateLookup
 from pathlib import Path
 import shutil
 import json_to_proto
+
+# PREFACE:
+# This is not maintainable. this is a hack. i do not care. append if you dare, refactor if you must.
+# it would be 
+
+from enum import Enum
+
+class ModelType(Enum):
+    CONTROLLER = "controller"
+    ESTIMATOR = "estimator"
 
 def copy_directory(src, dest):
     """
@@ -32,13 +43,14 @@ def copy_directory(src, dest):
 
 def read_zipped_files(json_file):
     try:
+        # Load the JSON file
         with open(json_file, 'r') as f:
-            zip_files = json.load(f)
-        
-        if isinstance(zip_files, list):
-            return zip_files
-        else:
-            raise ValueError("JSON content is not a list.")
+            data = json.load(f)
+
+        # Access the lists
+        controllers = data.get('controllers', [])
+        estimators = data.get('estimators', [])
+        return controllers, estimators
     
     except FileNotFoundError:
         print(f"Error: File '{json_file}' not found.")
@@ -159,45 +171,52 @@ def parse_inport_json(json_file):
         return [inputs, parameters, outports]
 
 
-def generate_model_integration(model, parameters, inputs, outports, output_include, output_src):
-    header_template = Template(filename="matlab_model/MatlabControllerModelIntegration.hpp.mako")
-    header_rendered = header_template.render(model=model, parameters=parameters, inputs=inputs, outports=outports)
+def generate_model_integration(template_lookup, model_type, model, parameters, inputs, outports, output_include, output_src):
+    if model_type == ModelType.CONTROLLER:
+        header_template_path = "matlab_model/MatlabControllerModelIntegration.hpp.mako"
+        src_template_path = "matlab_model/MatlabControllerModelIntegration.cpp.mako"
 
-    src_template = Template(filename="matlab_model/MatlabControllerModelIntegration.cpp.mako")
-    src_rendered = src_template.render(model=model, parameters=parameters, inputs=inputs, outports=outports)
+    elif model_type == ModelType.ESTIMATOR:
+        header_template_path = "matlab_model/MatlabEstimatorModelIntegration.hpp.mako"
+        src_template_path = "matlab_model/MatlabEstimatorModelIntegration.cpp.mako"
+
+    else:
+        raise ValueError(f"Unsupported model type: {model_type}")
+        
+
+    header_template = Template(filename=header_template_path)
+    header_rendered = header_template.render(
+        model=model, parameters=parameters, inputs=inputs, outports=outports
+    )
+    
+
+    
+    src_template = Template(filename=src_template_path, lookup=template_lookup)
+    src_rendered = src_template.render(
+        model=model, parameters=parameters, inputs=inputs, outports=outports
+    )
 
     integration_header_fpath = os.path.join(output_include, model + '_MatlabModel.hpp')
     with open(integration_header_fpath, 'w') as f:
         f.write(header_rendered)
-
     print(f"{model}_MatlabModel.hpp generated at '{integration_header_fpath}'.")
 
-    inegration_src_fpath = os.path.join(output_src, model + "_MatlabModel.cpp")
-    with open(inegration_src_fpath, 'w') as f:
+    integration_src_fpath = os.path.join(output_src, model + "_MatlabModel.cpp")
+    with open(integration_src_fpath, 'w') as f:
         f.write(src_rendered)
+    print(f"{model}_MatlabModel.cpp generated at '{integration_src_fpath}'.")
 
-    print(f"{model}_MatlabModel.hpp generated at '{inegration_src_fpath}'.")
-
-def generate_matlab_model_add_helper(model_names, output_dir):
+def generate_matlab_model_add_helper(controller_model_names, all_model_names, output_dir):
     model_add_temp = Template(filename='matlab_model/MatlabModelAddHelper.hpp.mako')
-    rendered_reg_templt = model_add_temp.render(model_name_length=len(model_names), model_names=model_names)
+    rendered_reg_templt = model_add_temp.render(num_controller_models=len(controller_model_names), controller_model_names=controller_model_names, all_model_names=all_model_names)
     proto_reg_helper = os.path.join(output_dir, 'MatlabModelAddHelper.hpp')
     with open(proto_reg_helper, 'w') as f:
         f.write(rendered_reg_templt)
 
-if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        print("Usage: python process_simulink_codegen.py <output_directory>")
-        sys.exit(1)
-
-    output_directory = sys.argv[1]
-    
-    # Read the zipped files
-    files = read_zipped_files('zipped_files.json') 
+def makes_codegen_libs(files, output_directory):
     libraries = []  # Store library info for CMake
-
-
     cpp_lib_output_dir = os.path.join(output_directory, 'source_code')
+
     for file in files:
         extraction_path = unzip_and_rename(file, cpp_lib_output_dir)
         if extraction_path:
@@ -217,8 +236,42 @@ if __name__ == "__main__":
         else:
             print("Failed to extract and process the zip file.")
 
-    # Generate the CMakeLists.txt with the collected libraries
+    return libraries, cpp_lib_output_dir
 
+def generate_estimator_integration(estimator_names, model_output_dict, output_dir):
+
+    estim_int = Template(filename='matlab_model/EstimatorManager.hpp.mako')
+    rendered_estim_int = estim_int.render(estimator_names=estimator_names)
+    estim_int_file_out = os.path.join(output_dir, 'EstimatorManager.hpp')
+    with open(estim_int_file_out, 'w') as f:
+        f.write(rendered_estim_int)
+        
+    estim_output_types = Template(filename='matlab_model/EstimatorOutputs.hpp.mako')
+    rend_est_out = estim_output_types.render(model_outputs=model_output_dict)
+    
+    estim_file_out = os.path.join(output_dir, 'EstimatorOutputs.hpp')
+    with open(estim_file_out, 'w') as f:
+        f.write(rend_est_out)
+
+    
+
+if __name__ == "__main__":
+    if len(sys.argv) < 2:
+        print("Usage: python process_simulink_codegen.py <output_directory>")
+        sys.exit(1)
+
+    output_directory = sys.argv[1]
+    
+    # Read the zipped files
+    controller_files, estimator_files = read_zipped_files('zipped_files.json') 
+    
+    
+
+    all_files = controller_files + estimator_files
+
+    libraries, cpp_lib_output_dir = makes_codegen_libs(all_files, output_directory)
+    
+    # Generate the CMakeLists.txt with the collected libraries
     generate_cmakelists(libraries, cpp_lib_output_dir)
     copy_directory('cmake/', os.path.join(cpp_lib_output_dir, 'cmake'))
 
@@ -228,21 +281,43 @@ if __name__ == "__main__":
     os.makedirs(gend_include_dir, exist_ok=True)
     os.makedirs(gend_src_dir, exist_ok=True)
 
-    model_names =[]
-    for file in files:
-        model_names.append(file.strip(".zip"))
+    controller_model_names =[]
+    for file in controller_files:
+        controller_model_names.append(file.strip(".zip"))
+    
+    estimator_model_names =[]
+    for file in estimator_files:
+        estimator_model_names.append(file.strip(".zip"))
 
+    all_model_names = controller_model_names + estimator_model_names
     shutil.copy("matlab_model/MatlabModel.hpp", gend_include_dir)
+    shutil.copy("matlab_model/MatlabEstimModel.hpp", gend_include_dir)
     proto_file_names = []
-    for model in model_names:
+
+    template_lookup = TemplateLookup(directories=['.'], input_encoding='utf-8')
+    for model in controller_model_names:
         # Use inport data to generate header and src matlab math
         inportInfoJsonName = model + "_inport_info.json"
         inputs, parameters, outports = parse_inport_json(inportInfoJsonName)
-        generate_model_integration(model=model, parameters=parameters, inputs=inputs, outports=outports, output_include=gend_include_dir, output_src=gend_src_dir)
+        print(model)
+        generate_model_integration(template_lookup, model_type=ModelType.CONTROLLER, model=model, parameters=parameters, inputs=inputs, outports=outports, output_include=gend_include_dir, output_src=gend_src_dir)
+        os.makedirs(output_directory+"/proto_outputs", exist_ok=True)
+        pb_proto_name = model + "_estimation_msgs.proto"
+        json_to_proto.run(inportInfoJsonName, output_directory+"/proto_outputs/" + pb_proto_name, model)
+        proto_file_names.append(pb_proto_name)
+    
+    estim_out_dict = {}
+    for model in estimator_model_names:
+        # Use inport data to generate header and src matlab math
+        inportInfoJsonName = model + "_inport_info.json"
+        inputs, parameters, outports = parse_inport_json(inportInfoJsonName)
+        estim_out_dict[model] = outports
+        generate_model_integration(template_lookup, model_type=ModelType.ESTIMATOR, model=model, parameters=parameters, inputs=inputs, outports=outports, output_include=gend_include_dir, output_src=gend_src_dir)
         os.makedirs(output_directory+"/proto_outputs", exist_ok=True)
         pb_proto_name = model + "_estimation_msgs.proto"
         json_to_proto.run(inportInfoJsonName, output_directory+"/proto_outputs/" + pb_proto_name, model)
         proto_file_names.append(pb_proto_name)
 
     generate_matlab_model_proto_reg_helper(proto_file_names, gend_include_dir)
-    generate_matlab_model_add_helper(model_names, gend_include_dir) # integration helper template for drivebrainapp
+    generate_matlab_model_add_helper(controller_model_names, all_model_names, gend_include_dir) # integration helper template for drivebrainapp
+    generate_estimator_integration(estimator_model_names, estim_out_dict, gend_include_dir)
