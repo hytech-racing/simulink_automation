@@ -241,7 +241,7 @@ def makes_codegen_libs(files, output_directory):
 def generate_estimator_integration(estimator_names, model_output_dict, output_dir):
 
     estim_int = Template(filename='matlab_model/EstimatorManager.hpp.mako')
-    rendered_estim_int = estim_int.render(estimator_names=estimator_names)
+    rendered_estim_int = estim_int.render(estimator_names=estimator_names, model_output_dict=model_output_dict)
     estim_int_file_out = os.path.join(output_dir, 'EstimatorManager.hpp')
     with open(estim_int_file_out, 'w') as f:
         f.write(rendered_estim_int)

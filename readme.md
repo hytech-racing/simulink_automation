@@ -18,3 +18,12 @@ This is because it allows us to update the method(s) we use to release the model
 1. shall handle automated running of the code generation matlab script on desired models
 2. the release process shall be kicked off upon push from a releasing repo upon changes to models
 3. shall generate a cmake package containing multiple libraries, one for each code generation target.
+
+
+TODO:
+
+- [x] make the estimator generation (should be very similar to the controller gen)
+- [x] be able to have estimators feed their outputs into the controllers directly
+	- [x] ideally with a generated POD from the outports of the estimators
+	- [x] figure out the way to get the estimator inputs into the generated controllers - solved by making an estimator manager that can be passed into the controller model and have a getter for the results of the estimator 
+		- [x] the estimator model outputs are formatted like "${model}_${field}" for the controller inputs
