@@ -1,7 +1,6 @@
 HyTech_Sim/
 .venv/
 slprg/
-model_processing/
 slprj/
 Tire_Model_Codegen_ert_rtw/
 HT09_Linear_Vehicle_Model.slxc
