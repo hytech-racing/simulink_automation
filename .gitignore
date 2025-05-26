@@ -21,3 +21,5 @@ zipped_files.json
 source_code/
 gen_rel.tar.gz
 .vscode/
+*_ert_rtw/
+*.slxc

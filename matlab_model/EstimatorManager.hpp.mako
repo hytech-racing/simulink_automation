@@ -10,6 +10,8 @@
 
 #include "EstimatorOutputs.hpp"
 
+#include <Configurable.hpp>
+#include <Loggable.hpp>
 
 % for estim in estimator_names:
 #include "${estim}_MatlabModel.hpp"
@@ -22,7 +24,7 @@ namespace estimation
 class EstimatorManager
 {
     public:
-        EstimatorManager(core::JsonFileHandler &json_file_handler) :
+        EstimatorManager(core::JsonFileHandler &json_file_handler) ${':' if len(estimator_names) >0 else ''}
             % for i, estim in enumerate(estimator_names):
             _${estim}_inst(std::make_shared<::estimation::${estim}_MatlabEstimModel>(json_file_handler))${',' if i < len(estimator_names) - 1 else ''}
             % endfor
