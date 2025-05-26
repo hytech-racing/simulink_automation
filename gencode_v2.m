@@ -14,7 +14,8 @@ models_json = jsondecode(str);
 
 
 % load the standard codegen 
-load('hytech_codegen_config.mat');
+load('hytech_codegen_config_r2.mat');
+
 %%
 controllers = models_json.controllers;
 estimators = models_json.estimators;

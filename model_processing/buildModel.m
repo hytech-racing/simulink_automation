@@ -13,10 +13,10 @@ function [zipFileName] = buildModel(modelName, Config)
     % Attach and activate it on the target model
     activeConfig = getActiveConfigSet(modelName);
     activeConfig.Name
-    if(~strcmp(activeConfig.Name, 'hytech_codegen_config'))
+    if(~strcmp(activeConfig.Name, 'hytech_codegen_config_r2'))
 
         attachConfigSet(modelName, Config);  % true = make it active
-        setActiveConfigSet(modelName, 'hytech_codegen_config');
+        setActiveConfigSet(modelName, 'hytech_codegen_config_r2');
         
         
         fprintf('attached config');
