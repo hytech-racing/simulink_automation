@@ -18,6 +18,18 @@
     in_data.loadcell_rl = in.loadcells.RL;
     % elif input == "loadcell_rr":
     in_data.loadcell_rr = in.loadcells.RR;
+    % elif input == "ax_m_s2":
+    in_data.ax_m_s2 = in.current_body_accel_mss.x;
+    % elif input == "ay_m_s2":
+    in_data.ay_m_s2 = in.current_body_accel_mss.y;
+    % elif input == "torq_Nm_fl":
+    in_data.torque_Nm_fl = in.current_torques_nm.FL;
+    % elif input == "torq_Nm_fr":
+    in_data.torque_Nm_fr = in.current_torques_nm.FR;
+    % elif input == "torq_Nm_rl":
+    in_data.torque_Nm_rl = in.current_torques_nm.RL;
+    % elif input == "torq_Nm_rr":
+    in_data.torque_Nm_rr = in.current_torques_nm.RR;
     % endif
 % endfor
 
