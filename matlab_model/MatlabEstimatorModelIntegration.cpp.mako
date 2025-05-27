@@ -1,5 +1,6 @@
 #include "${model}.h"
-#include "${model}_MatlabEstimModel.hpp"
+#include "${model}_MatlabModel.hpp"
+
 
 void estimation::${model}_MatlabEstimModel::handle_parameter_updates(const std::unordered_map<std::string, core::common::Configurable::ParamTypes> &new_param_map) 
 {
@@ -24,10 +25,10 @@ std::shared_ptr<${model}_estimation_msgs::${model}_Outports> estimation::${model
     return msg;
 }
 
-
-estimation::${model}_MatlabEstimModel::${model}_MatlabEstimModel(core::JsonFileHandler &json_file_handler) : MatlabModel(json_file_handler, "${model}_MatlabEstimModel") {
+estimation::${model}_MatlabEstimModel::${model}_MatlabEstimModel(core::JsonFileHandler &json_file_handler) : MatlabEstimModel(json_file_handler, "${model}_MatlabEstimModel") {
     _model_inputs = { };
 }
+
 <%!
 def format_params_check(params):
     return " && ".join(params)
@@ -61,7 +62,7 @@ bool estimation::${model}_MatlabEstimModel::init() {
         _parameters = {
             ${format_parameter_derefencering(parameters)}
         };
-        param_update_handler_sig.connect(boost::bind(&${model}_MatlabModel::handle_parameter_updates, this, std::placeholders::_1));
+        param_update_handler_sig.connect(boost::bind(&${model}_MatlabEstimModel::handle_parameter_updates, this, std::placeholders::_1));
         set_configured();
         return true;
     }
@@ -94,15 +95,15 @@ ${model}::ExtY_${model}_T estimation::${model}_MatlabEstimModel::evaluate_estima
     return outputs;
 }
 
-${model}_output_t estimation::${model}_MatlabEstimModel::step_estimator(const core::VehicleState &in)
+estimation::${model}_output_t estimation::${model}_MatlabEstimModel::step_estimator(const core::VehicleState &in)
 {
     ${model}_inputs in_data = {};
 
-    <%include file="model_input_include.mako" args="model_type='estim'"/>
+    <%include file="model_input_include.mako" args="test=True"/>
     
     auto result = evaluate_estimator(in_data);
     
-    ${model}_output_t out = {};
+    estimation::${model}_output_t out = {};
 
     % for outport in outports: 
     out.${outport} = result.${outport};

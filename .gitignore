@@ -1,7 +1,6 @@
 HyTech_Sim/
 .venv/
 slprg/
-model_processing/
 slprj/
 Tire_Model_Codegen_ert_rtw/
 HT09_Linear_Vehicle_Model.slxc
@@ -21,3 +20,5 @@ zipped_files.json
 source_code/
 gen_rel.tar.gz
 .vscode/
+*_ert_rtw/
+*.slxc

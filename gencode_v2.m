@@ -1,4 +1,4 @@
-% List of model names to build
+    % List of model names to build
 rootFolder = pwd;  % Get the current folder
 addpath(genpath(rootFolder));  % Add all sub-folders
 
@@ -14,9 +14,11 @@ models_json = jsondecode(str);
 
 
 % load the standard codegen 
-load('hytech_codegen_config.mat');
+load('hytech_codegen_config_r2.mat');
+
 %%
 controllers = models_json.controllers;
+estimators = models_json.estimators;
 
 % Cell array to store the generated zip file names
 zipFiles = {};

@@ -23,6 +23,11 @@ for i= 1:length(inports)
         struct_inport_name_w_param_status(i).is_bool = false;
     end
     
+    if (strcmp(areas(ind).Area, 'estimator-output'))
+        struct_inport_name_w_param_status(i).is_estim_out = true;
+    else
+        struct_inport_name_w_param_status(i).is_estim_out = false;
+    end
 end
 
 % Handle outports

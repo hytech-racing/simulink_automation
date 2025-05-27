@@ -10,7 +10,17 @@
     in_data.accel = in.input.requested_accel;
     % elif input == "brake":
     in_data.brake = in.input.requested_brake;
-	% elif model_type == "control":
-	in_data.${input} = estimator_outputs.${input};
+    % elif input == "loadcell_fl":
+    in_data.loadcell_fl = in.loadcells.FL;
+    % elif input == "loadcell_fr":
+    in_data.loadcell_fr = in.loadcells.FR;
+    % elif input == "loadcell_rl":
+    in_data.loadcell_rl = in.loadcells.RL;
+    % elif input == "loadcell_rr":
+    in_data.loadcell_rr = in.loadcells.RR;
     % endif
+% endfor
+
+% for estim_output in estim_outputs:
+    in_data.${estim_output} = estimator_outputs.${estim_output};
 % endfor
