@@ -30,6 +30,14 @@
     in_data.torque_Nm_rl = in.current_torques_nm.RL;
     % elif input == "torq_Nm_rr":
     in_data.torque_Nm_rr = in.current_torques_nm.RR;
+    % elif input == "speed_rpm_fl":
+    in_data.speed_rpm_fl = in.current_rpms.FL;
+    % elif input == "speed_rpm_fr":
+    in_data.speed_rpm_fr = in.current_rpms.FR;
+    % elif input == "speed_rpm_rl":
+    in_data.speed_rpm_rl = in.current_rpms.RL;
+    % elif input == "speed_rpm_rr":
+    in_data.speed_rpm_rr = in.current_rpms.RR;
     % endif
 % endfor
 
