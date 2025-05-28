@@ -38,6 +38,10 @@
     in_data.speed_rpm_rl = in.current_rpms.RL;
     % elif input == "speed_rpm_rr":
     in_data.speed_rpm_rr = in.current_rpms.RR;
+    % elif input == "ins_mode":
+    in_data.ins_mode = in.ins_status.status_mode;
+    % elif input == "ins_vel_u":
+    in_data.ins_vel_u = in.ins_status.vel_uncertainty;
     % endif
 % endfor
 
