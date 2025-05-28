@@ -23,13 +23,13 @@
     % elif input == "ay_m_s2":
     in_data.ay_m_s2 = in.current_body_accel_mss.y;
     % elif input == "torq_Nm_fl":
-    in_data.torque_Nm_fl = in.current_torques_nm.FL;
+    in_data.torq_Nm_fl = in.current_torques_nm.FL;
     % elif input == "torq_Nm_fr":
-    in_data.torque_Nm_fr = in.current_torques_nm.FR;
+    in_data.torq_Nm_fr = in.current_torques_nm.FR;
     % elif input == "torq_Nm_rl":
-    in_data.torque_Nm_rl = in.current_torques_nm.RL;
+    in_data.torq_Nm_rl = in.current_torques_nm.RL;
     % elif input == "torq_Nm_rr":
-    in_data.torque_Nm_rr = in.current_torques_nm.RR;
+    in_data.torq_Nm_rr = in.current_torques_nm.RR;
     % elif input == "speed_rpm_fl":
     in_data.speed_rpm_fl = in.current_rpms.FL;
     % elif input == "speed_rpm_fr":
