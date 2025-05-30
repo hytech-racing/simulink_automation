@@ -1,11 +1,13 @@
 
 % for input in inputs:
-    % if input == "vx_m_s":
-    in_data.vx_m_s = in.current_body_vel_ms.x;
+    % if input == "vx_raw_m_s":
+    in_data.vx_raw_m_s = in.current_body_vel_ms.x;
+    % if input == "vy_raw_m_s":
+    in_data.vy_raw_m_s = in.current_body_vel_ms.y;
     % elif input == "wz_rad_s":
     in_data.wz_rad_s = in.current_angular_rate_rads.z;
-    % elif input == "delta_deg":
-    in_data.delta_deg = in.steering_angle_deg;
+    % elif input == "steer_sensor_raw":
+    in_data.steer_sensor_raw = in.steering_angle_deg;
     % elif input == "accel":
     in_data.accel = in.input.requested_accel;
     % elif input == "brake":
@@ -30,14 +32,14 @@
     in_data.torq_Nm_rl = in.current_torques_nm.RL;
     % elif input == "torq_Nm_rr":
     in_data.torq_Nm_rr = in.current_torques_nm.RR;
-    % elif input == "speed_rpm_fl":
-    in_data.speed_rpm_fl = in.current_rpms.FL;
-    % elif input == "speed_rpm_fr":
-    in_data.speed_rpm_fr = in.current_rpms.FR;
-    % elif input == "speed_rpm_rl":
-    in_data.speed_rpm_rl = in.current_rpms.RL;
-    % elif input == "speed_rpm_rr":
-    in_data.speed_rpm_rr = in.current_rpms.RR;
+    % elif input == "motor_rpm_fl":
+    in_data.motor_rpm_fl = in.current_rpms.FL;
+    % elif input == "motor_rpm_fr":
+    in_data.motor_rpm_fr = in.current_rpms.FR;
+    % elif input == "motor_rpm_rl":
+    in_data.motor_rpm_rl = in.current_rpms.RL;
+    % elif input == "motor_rpm_rr":
+    in_data.motor_rpm_rr = in.current_rpms.RR;
     % elif input == "ins_mode":
     in_data.ins_mode = in.ins_status.status_mode;
     % elif input == "ins_vel_u":

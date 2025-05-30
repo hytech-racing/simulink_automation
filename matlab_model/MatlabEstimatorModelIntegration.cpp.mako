@@ -48,6 +48,9 @@ def format_parameter_derefencering(parameters):
 %>
 
 bool estimation::${model}_MatlabEstimModel::init() {
+
+    % if (len(parameters) > 0):
+    
     % for parameter in parameters:
     auto ${parameter} = get_live_parameter<${parameters[parameter]}>("${parameter}");
     % endfor
@@ -66,6 +69,10 @@ bool estimation::${model}_MatlabEstimModel::init() {
         set_configured();
         return true;
     }
+    % else:
+    set_configured();
+    return true;
+    % endif
 
 }
 

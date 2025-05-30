@@ -52,10 +52,12 @@ bool estimation::${model}_MatlabModel::init() {
         return false;
     }
 
+    % if (len(parameters) > 0):
+    
     % for parameter in parameters:
     auto ${parameter} = get_live_parameter<${parameters[parameter]}>("${parameter}");
     % endfor
-    
+
     if (!(${format_params_check(parameters)})) 
     {
         return false;
@@ -70,6 +72,10 @@ bool estimation::${model}_MatlabModel::init() {
         set_configured();
         return true;
     }
+    % else:
+    set_configured();
+    return true;
+    % endif
 
 }
 

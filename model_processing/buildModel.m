@@ -5,23 +5,33 @@ function [zipFileName] = buildModel(modelName, Config)
     fprintf('Building model: %s\n', modelName); % Display progress
     
     % Load the Simulink model
-    load_system(modelName);
+    [refModels, ~] = find_mdlrefs(modelName);
+    allModels = unique([{modelName}; refModels]);
     
-    % Remove any existing config set with the same name as the standard
-    % codegen config
+    for i = 1:numel(allModels)
+        m = allModels{i};
+        load_system(m);
+        % Remove any existing config set with the same name as the standard
+        % codegen config
+        
+        % Attach and activate it on the target model
+        activeConfig = getActiveConfigSet(m);
+        activeConfig.Name
+        if(~strcmp(activeConfig.Name, 'hytech_codegen_config_r2'))
+            
+            cfgClone = copy(Config);
+            attachConfigSet(m, cfgClone);  % true = make it active
+            
+            setActiveConfigSet(m, 'hytech_codegen_config_r2');
+            
+            
+            fprintf('attached config');
     
-    % Attach and activate it on the target model
-    activeConfig = getActiveConfigSet(modelName);
-    activeConfig.Name
-    if(~strcmp(activeConfig.Name, 'hytech_codegen_config_r2'))
-
-        attachConfigSet(modelName, Config);  % true = make it active
-        setActiveConfigSet(modelName, 'hytech_codegen_config_r2');
-        
-        
-        fprintf('attached config');
+        end
 
     end
+    
+    
 
     
     % Build the model
