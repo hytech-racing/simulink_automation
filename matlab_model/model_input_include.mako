@@ -2,7 +2,7 @@
 % for input in inputs:
     % if input == "vx_raw_m_s":
     in_data.vx_raw_m_s = in.current_body_vel_ms.x;
-    % if input == "vy_raw_m_s":
+    % elif input == "vy_raw_m_s":
     in_data.vy_raw_m_s = in.current_body_vel_ms.y;
     % elif input == "wz_rad_s":
     in_data.wz_rad_s = in.current_angular_rate_rads.z;

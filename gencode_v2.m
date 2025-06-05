@@ -5,6 +5,7 @@ addpath(genpath(rootFolder));  % Add all sub-folders
 % HT09_Vehicle_Parameters;
 load_params;
 
+%%
 fname = 'models.json';
 fid = fopen(fname); 
 raw = fread(fid,inf); 
