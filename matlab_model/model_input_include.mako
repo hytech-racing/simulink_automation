@@ -42,8 +42,38 @@
     in_data.motor_rpm_rr = in.current_rpms.RR;
     % elif input == "ins_mode":
     in_data.ins_mode = in.ins_status.status_mode;
-    % elif input == "ins_vel_u":
-    in_data.ins_vel_u = in.ins_status.vel_uncertainty;
+    % elif input == "motor_temp_C_fl":
+    in_data.motor_temp_C_fl = in.dt_data.inverter_motor_temps_c.FL;
+    % elif input == "motor_dt_datatemp_C_fr":
+    in_data.motor_temp_C_fr = in.dt_data.inverter_motor_temps_c.FR;
+    % elif input == "motor_temp_C_rl":
+    in_data.motor_temp_C_rl = in.dt_data.inverter_motor_temps_c.RL;
+    % elif input == "motor_temp_C_rr":
+    in_data.motor_temp_C_rr = in.dt_data.inverter_motor_temps_c.RR;
+
+    % elif input == "inverter_temp_C_fl":
+    in_data.inverter_temp_C_fl = in.dt_data.inverter_temps_c.FL;
+    % elif input == "motor_dt_datatemp_C_fr":
+    in_data.inverter_temp_C_fr = in.dt_data.inverter_temps_c.FR;
+    % elif input == "inverter_temp_C_rl":
+    in_data.inverter_temp_C_rl = in.dt_data.inverter_temps_c.RL;
+    % elif input == "inverter_temp_C_rr":
+    in_data.inverter_temp_C_rr = in.dt_data.inverter_temps_c.RR;
+
+    % elif input == "igbt_temp_C_fl":
+    in_data.igbt_temp_C_fl = in.dt_data.inverter_igbt_temps_c.FL;
+    % elif input == "motor_dt_datatemp_C_fr":
+    in_data.igbt_temp_C_fr = in.dt_data.inverter_igbt_temps_c.FR;
+    % elif input == "igbt_temp_C_rl":
+    in_data.igbt_temp_C_rl = in.dt_data.inverter_igbt_temps_c.RL;
+    % elif input == "igbt_temp_C_rr":
+    in_data.igbt_temp_C_rr = in.dt_data.inverter_igbt_temps_c.RR;
+    
+    % elif input == "igbt_temp_C_rr":
+    in_data.igbt_temp_C_rr = in.dt_data.inverter_igbt_temps_c.RR;
+    
+    % elif input == "min_cell_voltage":
+    in_data.min_cell_voltage = in.acc_data.min_cell_voltage;
     % endif
 % endfor
 
