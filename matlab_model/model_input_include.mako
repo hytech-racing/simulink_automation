@@ -74,6 +74,9 @@
     
     % elif input == "min_cell_voltage":
     in_data.min_cell_voltage = in.acc_data.min_cell_voltage;
+    % elif input == "pack_voltage":
+    in_data.pack_voltage = in.acc_data.pack_voltage;
+    
     % endif
 % endfor
 
