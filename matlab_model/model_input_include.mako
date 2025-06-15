@@ -42,6 +42,9 @@
     in_data.motor_rpm_rr = in.current_rpms.RR;
     % elif input == "ins_mode":
     in_data.ins_mode = in.ins_status.status_mode;
+    % elif input == "ins_vel_u":
+    in_data.ins_vel_u = in.ins_status.vel_uncertainty;
+    
     % elif input == "motor_temp_C_fl":
     in_data.motor_temp_C_fl = in.dt_data.inverter_motor_temps_c.FL;
     % elif input == "motor_dt_datatemp_C_fr":
