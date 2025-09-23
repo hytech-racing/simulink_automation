@@ -47,21 +47,21 @@
     
     % elif input == "motor_temp_C_fl":
     in_data.motor_temp_C_fl = in.dt_data.inverter_motor_temps_c.FL;
-    % elif input == "motor_dt_datatemp_C_fr":
+    % elif input == "motor_temp_C_fr":
     in_data.motor_temp_C_fr = in.dt_data.inverter_motor_temps_c.FR;
     % elif input == "motor_temp_C_rl":
     in_data.motor_temp_C_rl = in.dt_data.inverter_motor_temps_c.RL;
     % elif input == "motor_temp_C_rr":
     in_data.motor_temp_C_rr = in.dt_data.inverter_motor_temps_c.RR;
 
-    % elif input == "inverter_temp_C_fl":
-    in_data.inverter_temp_C_fl = in.dt_data.inverter_temps_c.FL;
-    % elif input == "motor_dt_datatemp_C_fr":
-    in_data.inverter_temp_C_fr = in.dt_data.inverter_temps_c.FR;
-    % elif input == "inverter_temp_C_rl":
-    in_data.inverter_temp_C_rl = in.dt_data.inverter_temps_c.RL;
-    % elif input == "inverter_temp_C_rr":
-    in_data.inverter_temp_C_rr = in.dt_data.inverter_temps_c.RR;
+    % elif input == "inv_temp_C_fl":
+    in_data.inv_temp_C_fl = in.dt_data.inverter_temps_c.FL;
+    % elif input == "inv_temp_C_fr":
+    in_data.inv_temp_C_fr = in.dt_data.inverter_temps_c.FR;
+    % elif input == "inv_temp_C_rl":
+    in_data.inv_temp_C_rl = in.dt_data.inverter_temps_c.RL;
+    % elif input == "inv_temp_C_rr":
+    in_data.inv_temp_C_rr = in.dt_data.inverter_temps_c.RR;
 
     % elif input == "igbt_temp_C_fl":
     in_data.igbt_temp_C_fl = in.dt_data.inverter_igbt_temps_c.FL;
@@ -79,6 +79,18 @@
     in_data.min_cell_voltage = in.acc_data.min_cell_voltage;
     % elif input == "pack_voltage":
     in_data.pack_voltage = in.acc_data.pack_voltage;
+
+    % elif input == "motor_overload_fl": 
+    in_data.motor_overload_fl = in.motor_overload_percentages.FL;
+    % elif input == "motor_overload_fr": 
+    in_data.motor_overload_fl = in.motor_overload_percentages.FR;
+    % elif input == "motor_overload_rl": 
+    in_data.motor_overload_fl = in.motor_overload_percentages.RL;
+    % elif input == "motor_overload_rr": 
+    in_data.motor_overload_fl = in.motor_overload_percentages.RR;
+    
+    % elif input == "rack_pot_raw":
+    in_data.rack_pot_raw = in.suspension_potentiometers_mm.FR;
     
     % endif
 % endfor
