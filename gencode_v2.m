@@ -1,4 +1,6 @@
-    % List of model names to build
+clc;
+
+% List of model names to build
 rootFolder = pwd;  % Get the current folder
 addpath(genpath(rootFolder));  % Add all sub-folders
 
@@ -27,6 +29,19 @@ zipFiles.controllers = {};
 zipFiles.estimators = {};
 % Loop over each model
 
+controller_base_list = {'qp_torq_allocator_base', 'torq_follower_base'};
+
+for i = 1:length(controller_base_list)
+    load_system(controller_base_list{i});
+    set_param(controller_base_list{i}, 'SolverName', 'FixedStepAuto')
+end
+
+estimator_base_list = {'amk_eff_estimator_base', 'intent_estimator_base', 'tire_estimator_base', 'vx_estimator_base', 'vy_estimator_base', 'wheel_steer_estimator_base'};
+
+for i = 1:length(estimator_base_list)
+    load_system(estimator_base_list{i});
+    set_param(estimator_base_list{i}, 'SolverName', 'FixedStepAuto')
+end
 
 for i = 1:length(controllers)
     modelName = controllers{i}; % Get the model name from the list
@@ -34,6 +49,7 @@ for i = 1:length(controllers)
     zipFiles.controllers{end+1} = zipFileName;
     fprintf('Generated zip file: %s\n', zipFileName);  % Output the zip file name
 end
+ 
 
 for i = 1:length(estimators)
     modelName = estimators{i}; % Get the model name from the list
