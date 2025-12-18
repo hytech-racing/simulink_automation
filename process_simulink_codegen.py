@@ -332,7 +332,7 @@ if __name__ == "__main__":
         json_to_proto.run(inportInfoJsonName, output_directory+"/proto_outputs/proto/" + pb_proto_name, model)
         proto_file_names.append(pb_proto_name)
     
-    add_cmake_to_proto_output(output_directory + "/proto_outputs/proto/", estimator_model_names + controller_model_names)
+    add_cmake_to_proto_output(output_directory + "/proto_outputs/", estimator_model_names + controller_model_names)
 
     generate_matlab_model_proto_reg_helper(proto_file_names, gend_include_dir)
     generate_matlab_model_add_helper(controller_model_names, all_model_names, gend_include_dir) # integration helper template for drivebrainapp
