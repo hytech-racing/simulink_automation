@@ -1,3 +1,4 @@
+<%text> 
 set(PROTO_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/generated/)
 set(LIBRARY simulink_automation_msgs_proto_cpp)
 set(OBJECT_LIBRARY simulink_automation_msgs_proto_cpp_object)
@@ -7,9 +8,11 @@ find_package(Protobuf REQUIRED CONFIG)
 file(MAKE_DIRECTORY ${PROTO_BINARY_DIR})
 
 add_library(${OBJECT_LIBRARY} OBJECT 
+</%text> 
     % for name in all_model_names: 
     proto/${name}_estimator_outports.proto
     % endfor
+<%text>
 )
 
 target_include_directories(${OBJECT_LIBRARY} 
@@ -35,3 +38,4 @@ install(
     FILES_MATCHING
     PATTERN "*.pb.h"
 )
+</%text>
