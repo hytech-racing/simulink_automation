@@ -262,8 +262,10 @@ def generate_estimator_integration(estimator_names, model_output_dict, output_di
 def add_cmake_to_proto_output(all_model_names, output_directory): 
     cmake_template_path = "proto/CMakeLists.txt.mako"
 
-    rendered_cmake_template = model_add_temp.render(all_model_names=all_model_names)
-    cmake_lists_loc = os.path.join(output_dir, 'CMakeLists.txt')
+    cmake_template = Template(filename=cmake_template_path)
+
+    rendered_cmake_template = cmake_template.render(all_model_names=all_model_names)
+    cmake_lists_loc = os.path.join(output_directory, 'CMakeLists.txt')
     with open(cmake_lists_loc, 'w') as f:
         f.write(rendered_cmake_template)
     
