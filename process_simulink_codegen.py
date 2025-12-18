@@ -315,9 +315,9 @@ if __name__ == "__main__":
         print(model)
         print(inputs)
         generate_model_integration(template_lookup, model_type=ModelType.CONTROLLER, model=model, parameters=parameters, inputs=inputs, outports=outports, output_include=gend_include_dir, output_src=gend_src_dir, estim_inputs=in_from_estim)
-        os.makedirs(output_directory+"/proto_outputs/proto", exist_ok=True)
+        os.makedirs(output_directory+"/proto", exist_ok=True)
         pb_proto_name = model + "_estimation_msgs.proto"
-        json_to_proto.run(inportInfoJsonName, output_directory+"/proto_outputs/proto/" + pb_proto_name, model)
+        json_to_proto.run(inportInfoJsonName, output_directory+"/proto/" + pb_proto_name, model)
         proto_file_names.append(pb_proto_name)
     
     estim_out_dict = {}
@@ -327,12 +327,12 @@ if __name__ == "__main__":
         inputs, parameters, outports, _ = parse_inport_json(inportInfoJsonName)
         estim_out_dict[model] = outports
         generate_model_integration(template_lookup, model_type=ModelType.ESTIMATOR, model=model, parameters=parameters, inputs=inputs, outports=outports, output_include=gend_include_dir, output_src=gend_src_dir)
-        os.makedirs(output_directory+"/proto_outputs/proto", exist_ok=True)
+        os.makedirs(output_directory+"/proto", exist_ok=True)
         pb_proto_name = model + "_estimation_msgs.proto"
-        json_to_proto.run(inportInfoJsonName, output_directory+"/proto_outputs/proto/" + pb_proto_name, model)
+        json_to_proto.run(inportInfoJsonName, output_directory+"/proto/" + pb_proto_name, model)
         proto_file_names.append(pb_proto_name)
     
-    add_cmake_to_proto_output(output_directory + "/proto_outputs/proto/", estimator_model_names + controller_model_names)
+    add_cmake_to_proto_output(output_directory + "/proto/", estimator_model_names + controller_model_names)
 
     generate_matlab_model_proto_reg_helper(proto_file_names, gend_include_dir)
     generate_matlab_model_add_helper(controller_model_names, all_model_names, gend_include_dir) # integration helper template for drivebrainapp
