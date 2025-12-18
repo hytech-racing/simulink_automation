@@ -10,7 +10,7 @@ file(MAKE_DIRECTORY ${PROTO_BINARY_DIR})
 add_library(${OBJECT_LIBRARY} OBJECT 
 </%text> 
     % for name in all_model_names: 
-    proto/${name}_estimator_outports.proto
+    proto/${name}_estimation_msgs.proto
     % endfor
 <%text>
 )
