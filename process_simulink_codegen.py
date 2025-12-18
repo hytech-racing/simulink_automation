@@ -259,7 +259,7 @@ def generate_estimator_integration(estimator_names, model_output_dict, output_di
     with open(estim_file_out, 'w') as f:
         f.write(rend_est_out)
 
-def add_cmake_to_proto_output(all_model_names, output_directory): 
+def add_cmake_to_proto_output(output_directory, all_model_names): 
     cmake_template_path = "proto/CMakeLists.txt.mako"
 
     cmake_template = Template(filename=cmake_template_path)
