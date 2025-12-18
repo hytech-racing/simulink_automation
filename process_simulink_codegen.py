@@ -313,7 +313,7 @@ if __name__ == "__main__":
         print(model)
         print(inputs)
         generate_model_integration(template_lookup, model_type=ModelType.CONTROLLER, model=model, parameters=parameters, inputs=inputs, outports=outports, output_include=gend_include_dir, output_src=gend_src_dir, estim_inputs=in_from_estim)
-        os.makedirs(output_directory+"/proto_outputs", exist_ok=True)
+        os.makedirs(output_directory+"/proto_outputs/proto", exist_ok=True)
         pb_proto_name = model + "_estimation_msgs.proto"
         json_to_proto.run(inportInfoJsonName, output_directory+"/proto_outputs/" + pb_proto_name, model)
         proto_file_names.append(pb_proto_name)
@@ -325,7 +325,7 @@ if __name__ == "__main__":
         inputs, parameters, outports, _ = parse_inport_json(inportInfoJsonName)
         estim_out_dict[model] = outports
         generate_model_integration(template_lookup, model_type=ModelType.ESTIMATOR, model=model, parameters=parameters, inputs=inputs, outports=outports, output_include=gend_include_dir, output_src=gend_src_dir)
-        os.makedirs(output_directory+"/proto_outputs", exist_ok=True)
+        os.makedirs(output_directory+"/proto_outputs/proto", exist_ok=True)
         pb_proto_name = model + "_estimation_msgs.proto"
         json_to_proto.run(inportInfoJsonName, output_directory+"/proto_outputs/proto/" + pb_proto_name, model)
         proto_file_names.append(pb_proto_name)
