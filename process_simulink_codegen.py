@@ -317,7 +317,7 @@ if __name__ == "__main__":
         generate_model_integration(template_lookup, model_type=ModelType.CONTROLLER, model=model, parameters=parameters, inputs=inputs, outports=outports, output_include=gend_include_dir, output_src=gend_src_dir, estim_inputs=in_from_estim)
         os.makedirs(output_directory+"/proto_outputs/proto", exist_ok=True)
         pb_proto_name = model + "_estimation_msgs.proto"
-        json_to_proto.run(inportInfoJsonName, output_directory+"/proto_outputs/proto" + pb_proto_name, model)
+        json_to_proto.run(inportInfoJsonName, output_directory+"/proto_outputs/proto/" + pb_proto_name, model)
         proto_file_names.append(pb_proto_name)
     
     estim_out_dict = {}
