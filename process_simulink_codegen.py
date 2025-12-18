@@ -259,6 +259,13 @@ def generate_estimator_integration(estimator_names, model_output_dict, output_di
     with open(estim_file_out, 'w') as f:
         f.write(rend_est_out)
 
+def add_cmake_to_proto_output(all_model_names, output_directory): 
+    cmake_template_path = "proto/CMakeLists.txt.mako"
+
+    rendered_cmake_template = model_add_temp.render(all_model_names=all_model_names)
+    cmake_lists_loc = os.path.join(output_dir, 'CMakeLists.txt')
+    with open(cmake_lists_loc, 'w') as f:
+        f.write(rendered_cmake_template)
     
 
 if __name__ == "__main__":
@@ -270,8 +277,6 @@ if __name__ == "__main__":
     
     # Read the zipped files
     controller_files, estimator_files = read_zipped_files('zipped_files.json') 
-    
-    
 
     all_files = controller_files + estimator_files
 
@@ -322,8 +327,10 @@ if __name__ == "__main__":
         generate_model_integration(template_lookup, model_type=ModelType.ESTIMATOR, model=model, parameters=parameters, inputs=inputs, outports=outports, output_include=gend_include_dir, output_src=gend_src_dir)
         os.makedirs(output_directory+"/proto_outputs", exist_ok=True)
         pb_proto_name = model + "_estimation_msgs.proto"
-        json_to_proto.run(inportInfoJsonName, output_directory+"/proto_outputs/" + pb_proto_name, model)
+        json_to_proto.run(inportInfoJsonName, output_directory+"/proto_outputs/proto/" + pb_proto_name, model)
         proto_file_names.append(pb_proto_name)
+    
+    add_cmake_to_proto_output(output_directory + "/proto_outputs/proto/", estimator_model_names + controller_model_names)
 
     generate_matlab_model_proto_reg_helper(proto_file_names, gend_include_dir)
     generate_matlab_model_add_helper(controller_model_names, all_model_names, gend_include_dir) # integration helper template for drivebrainapp
