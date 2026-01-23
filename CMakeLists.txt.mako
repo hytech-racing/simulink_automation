@@ -51,7 +51,7 @@ target_link_libraries(matlab_model PUBLIC
     % for library in libraries: 
     ${library['name']}
     %endfor
-    drivebrain_core::drivebrain_core
+    drivebrain_core
     protobuf::libprotobuf
     simulink_automation_msgs_proto_cpp::simulink_automation_msgs_proto_cpp
 )
