@@ -53,7 +53,7 @@ target_link_libraries(matlab_model PUBLIC
     %endfor
     drivebrain_core
     protobuf::libprotobuf
-    simulink_automation_msgs_proto_cpp::simulink_automation_msgs_proto_cpp
+    simulink_automation_msgs_proto_cpp
 )
 
 install(
