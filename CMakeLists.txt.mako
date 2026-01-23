@@ -5,9 +5,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(CMAKE_INCLUDE_HEADERS_IN_COMPILE_COMMANDS ON)
 
-find_package(drivebrain_core REQUIRED)
-find_package(simulink_automation_msgs_proto_cpp REQUIRED)
-find_package(protobuf REQUIRED)
+find_package(Protobuf REQUIRED)
 
 include(GNUInstallDirs)
 <%!
