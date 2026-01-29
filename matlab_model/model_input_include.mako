@@ -83,11 +83,11 @@
     % elif input == "motor_overload_fl": 
     in_data.motor_overload_fl = in.motor_overload_percentages.FL;
     % elif input == "motor_overload_fr": 
-    in_data.motor_overload_fl = in.motor_overload_percentages.FR;
+    in_data.motor_overload_fr = in.motor_overload_percentages.FR;
     % elif input == "motor_overload_rl": 
-    in_data.motor_overload_fl = in.motor_overload_percentages.RL;
+    in_data.motor_overload_rl = in.motor_overload_percentages.RL;
     % elif input == "motor_overload_rr": 
-    in_data.motor_overload_fl = in.motor_overload_percentages.RR;
+    in_data.motor_overload_rr = in.motor_overload_percentages.RR;
     
     % elif input == "rack_pot_raw":
     in_data.rack_pot_raw = in.suspension_potentiometers_mm.FR;
