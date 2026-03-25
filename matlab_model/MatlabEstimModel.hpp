@@ -8,13 +8,11 @@
 
 #include <memory>
 
-class MatlabEstimModel : public core::common::Loggable<std::shared_ptr<google::protobuf::Message>>,
-                         public core::common::Configurable
+class MatlabEstimModel
 {
     public:
-        MatlabEstimModel(core::JsonFileHandler &config, const std::string & model_name) : Configurable(config, model_name) {}
+        MatlabEstimModel() {}
         virtual ~MatlabEstimModel() = 0;
-
 };
 
 inline MatlabEstimModel::~MatlabEstimModel() {}

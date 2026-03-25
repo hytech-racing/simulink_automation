@@ -2,7 +2,7 @@
 #include "${model}_MatlabModel.hpp"
 
 
-void estimation::${model}_MatlabEstimModel::handle_parameter_updates(const std::unordered_map<std::string, core::common::Configurable::ParamTypes> &new_param_map) 
+void estimation::${model}_MatlabEstimModel::handle_parameter_updates(const std::unordered_map<std::string, foxglove::Parameter> &new_param_map) 
 {
     % for parameter in parameters:
     if (auto pval = std::get_if<${parameters[parameter]}>(&new_param_map.at("${parameter}"))) {
@@ -25,7 +25,7 @@ std::shared_ptr<${model}_estimation_msgs::${model}_Outports> estimation::${model
     return msg;
 }
 
-estimation::${model}_MatlabEstimModel::${model}_MatlabEstimModel(core::JsonFileHandler &json_file_handler) : MatlabEstimModel(json_file_handler, "${model}_MatlabEstimModel") {
+estimation::${model}_MatlabEstimModel::${model}_MatlabEstimModel() : MatlabEstimModel() {
     _model_inputs = { };
 }
 
@@ -52,11 +52,10 @@ bool estimation::${model}_MatlabEstimModel::init() {
     % if (len(parameters) > 0):
     
     % for parameter in parameters:
-    auto ${parameter} = get_live_parameter<${parameters[parameter]}>("${parameter}");
+    auto ${parameter} = core::FoxgloveServer::instance().get_param("${parameter}");
     % endfor
 
-    if (!(${format_params_check(parameters)})) 
-    {
+    if (!(${format_params_check(parameters)})) {
         return false;
     }
 
@@ -72,6 +71,7 @@ bool estimation::${model}_MatlabEstimModel::init() {
     % else:
     set_configured();
     return true;
+
     % endif
 
 }
@@ -98,7 +98,7 @@ ${model}::ExtY_${model}_T estimation::${model}_MatlabEstimModel::evaluate_estima
     ${model}::ExtY_${model}_T outputs = ${model}_model.getExternalOutputs();
     auto msg_to_log = get_proto_msg(outputs);
 
-    this->log(msg_to_log); // from base Loggable
+    core::log(msg_to_log); 
     return outputs;
 }
 

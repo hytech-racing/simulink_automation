@@ -1,7 +1,7 @@
 #include "${model}.h"
 #include "${model}_MatlabModel.hpp"
 
-void estimation::${model}_MatlabModel::handle_parameter_updates(const std::unordered_map<std::string, core::common::Configurable::ParamTypes> &new_param_map) 
+void estimation::${model}_MatlabModel::handle_parameter_updates(const std::unordered_map<std::string, foxglove::Parameter> &new_param_map) 
 {
     % for parameter in parameters:
     if (auto pval = std::get_if<${parameters[parameter]}>(&new_param_map.at("${parameter}"))) {
@@ -25,9 +25,10 @@ std::shared_ptr<${model}_estimation_msgs::${model}_Outports> estimation::${model
 }
 
 
-estimation::${model}_MatlabModel::${model}_MatlabModel(core::JsonFileHandler &json_file_handler, std::shared_ptr<estimation::EstimatorManager> estim_manager) : MatlabModel(json_file_handler, "${model}_MatlabModel"), _estim_manager(estim_manager) {
+estimation::${model}_MatlabModel::${model}_MatlabModel(std::shared_ptr<estimation::EstimatorManager> estim_manager) : MatlabModel(), _estim_manager(estim_manager) {
     _model_inputs = { };
 }
+
 <%!
 def format_params_check(params):
     return " && ".join(params)
@@ -45,21 +46,19 @@ def format_parameter_derefencering(parameters):
             frm += "*" + parameter_list[i] + ","
     return frm
 %>
+
 bool estimation::${model}_MatlabModel::init() {
     
-    if(!_estim_manager)
-    {
+    if(!_estim_manager) {
         return false;
     }
 
     % if (len(parameters) > 0):
-    
     % for parameter in parameters:
-    auto ${parameter} = get_live_parameter<${parameters[parameter]}>("${parameter}");
+    auto ${parameter} = core::FoxgloveServer::instance()::get_param("${parameter}");
     % endfor
 
-    if (!(${format_params_check(parameters)})) 
-    {
+    if (!(${format_params_check(parameters)})) {
         return false;
     }
 
@@ -72,6 +71,7 @@ bool estimation::${model}_MatlabModel::init() {
         set_configured();
         return true;
     }
+
     % else:
     set_configured();
     return true;
@@ -105,7 +105,7 @@ ${model}::ExtY_${model}_T estimation::${model}_MatlabModel::evaluate_estimator($
     ${model}::ExtY_${model}_T outputs = ${model}_model.getExternalOutputs();
     auto msg_to_log = get_proto_msg(outputs);
 
-    this->log(msg_to_log); // from base Loggable
+    core::log(msg_to_log);
     return outputs;
 }
 

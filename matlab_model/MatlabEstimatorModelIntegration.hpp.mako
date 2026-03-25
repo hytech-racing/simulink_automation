@@ -1,8 +1,6 @@
 #ifndef __${model.upper()}_MATLABESTIMMODEL_H__
 #define __${model.upper()}_MATLABESTIMMODEL_H__
 
-// stuff from drivebrain_core
-
 #include <VehicleDataTypes.hpp>
 #include <Estimator.hpp>
 
@@ -48,9 +46,9 @@ namespace estimation
             float get_dt_sec() {return 0.004; }
             bool init() override final;
 
-            ${model}_MatlabEstimModel(core::JsonFileHandler &json_file_handler);
+            ${model}_MatlabEstimModel();
 
-            void handle_parameter_updates(const std::unordered_map<std::string, core::common::Configurable::ParamTypes> &new_param_map);
+            void handle_parameter_updates(const std::unordered_map<std::string, foxglove::Parameter> &new_param_map);
 
             std::shared_ptr<${model}_estimation_msgs::${model}_Outports> get_proto_msg(${model}::ExtY_${model}_T res);
 

@@ -1,8 +1,6 @@
 #ifndef __${model.upper()}_MATLABMODEL_H__
 #define __${model.upper()}_MATLABMODEL_H__
 
-// stuff from drivebrain_core
-
 #include <VehicleDataTypes.hpp>
 
 #include <google/protobuf/message.h>
@@ -42,9 +40,9 @@ namespace estimation
             };
             bool init() override final;
 
-            ${model}_MatlabModel(core::JsonFileHandler &json_file_handler, std::shared_ptr<estimation::EstimatorManager> estim_manager);
+            ${model}_MatlabModel(std::shared_ptr<estimation::EstimatorManager> estim_manager);
 
-            void handle_parameter_updates(const std::unordered_map<std::string, core::common::Configurable::ParamTypes> &new_param_map);
+            void handle_parameter_updates(const std::unordered_map<std::string, foxglove::Parameter> &new_param_map);
 
             std::shared_ptr<${model}_estimation_msgs::${model}_Outports> get_proto_msg(${model}::ExtY_${model}_T res);
 
