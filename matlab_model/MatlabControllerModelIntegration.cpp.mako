@@ -61,8 +61,8 @@ void estimation::${model}_MatlabModel::handle_parameter_updates(const std::unord
     % if (len(parameters) > 0):
     std::unique_lock lk(_parameter_mutex);
     % for parameter in parameters:
-    if (auto v = get_from_param_map<${parameters[parameter]}>(new_param_map, "${parameter}")) {
-        _parameters.${parameter} = *v;
+    if (auto pval = std::get_if<${parameters[parameter]}>(&new_param_map.at("${parameter.lower()}"))) {
+        _parameters.${parameter} = *pval;
     }
     % endfor
     % endif

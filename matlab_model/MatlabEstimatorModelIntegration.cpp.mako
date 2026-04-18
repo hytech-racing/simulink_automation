@@ -57,17 +57,13 @@ bool estimation::${model}_MatlabEstimModel::init() {
 void estimation::${model}_MatlabEstimModel::handle_parameter_updates(const std::unordered_map<std::string, core::DBParam>& new_param_map) {
     % if (len(parameters) > 0):
     std::unique_lock lk(_parameter_mutex);
-    auto update = [&](const std::string& key, ${parameters[list(parameters.keys())[0]]}& target) {
-        if (auto v = get_from_param_map<${parameters[list(parameters.keys())[0]]}>(new_param_map, key)) {
-            target = *v;
-        }
-    };
     % for parameter in parameters:
-    update("estimator_matlabestimmodel/${parameter}", _parameters.${parameter});
+    if (auto pval = std::get_if<${parameters[parameter]}>(&new_param_map.at("estimator_matlabestimmodel/${parameter.lower()}"))) {
+        _parameters.${parameter} = *pval;
+    }
     % endfor
     % endif
-}
-${model}::ExtY_${model}_T estimation::${model}_MatlabEstimModel::evaluate_estimator(${model}_inputs &new_inputs) {
+}${model}::ExtY_${model}_T estimation::${model}_MatlabEstimModel::evaluate_estimator(${model}_inputs &new_inputs) {
     parameters curr_params;
     {
         std::unique_lock lk(_parameter_mutex);
