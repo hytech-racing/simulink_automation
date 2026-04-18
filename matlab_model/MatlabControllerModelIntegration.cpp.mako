@@ -1,16 +1,6 @@
 #include "${model}.h"
 #include "${model}_MatlabModel.hpp"
 
-void estimation::${model}_MatlabModel::handle_parameter_updates(const std::unordered_map<std::string, core::DBParam> &new_param_map) 
-{
-    % for parameter in parameters:
-    if (auto pval = std::get_if<${parameters[parameter]}>(&new_param_map.at("${parameter}"))) {
-        std::unique_lock lk(_parameter_mutex);
-        _parameters.${parameter} = *pval;
-    }
-    % endfor
-}
-
 <%!
 def to_lower_case(s):
     return s.lower()
@@ -23,12 +13,9 @@ std::shared_ptr<${model}_estimation_msgs::${model}_Outports> estimation::${model
     % endfor
     return msg;
 }
-
-
 estimation::${model}_MatlabModel::${model}_MatlabModel(std::shared_ptr<estimation::EstimatorManager> estim_manager) : MatlabModel(), _estim_manager(estim_manager) {
     _model_inputs = { };
 }
-
 <%!
 def format_params_check(params):
     return " && ".join(params)
@@ -46,8 +33,6 @@ def format_parameter_derefencering(parameters):
             frm += "*" + parameter_list[i] + ","
     return frm
 %>
-
-
 bool estimation::${model}_MatlabModel::init() {
     
     if(!_estim_manager) {
@@ -72,11 +57,9 @@ bool estimation::${model}_MatlabModel::init() {
     return true;
     % endif
 }
-
 void estimation::${model}_MatlabModel::handle_parameter_updates(const std::unordered_map<std::string, core::DBParam>& new_param_map) {
     % if (len(parameters) > 0):
     std::unique_lock lk(_parameter_mutex);
-
     % for parameter in parameters:
     if (auto v = get_from_param_map<${parameters[parameter]}>(new_param_map, "${parameter}")) {
         _parameters.${parameter} = *v;
@@ -84,41 +67,33 @@ void estimation::${model}_MatlabModel::handle_parameter_updates(const std::unord
     % endfor
     % endif
 }
-
 ${model}::ExtY_${model}_T estimation::${model}_MatlabModel::evaluate_estimator(${model}_inputs &new_inputs) {
     parameters curr_params;
     {
         std::unique_lock lk(_parameter_mutex);
         curr_params = _parameters;
     }
-
     // Update model inputs before evaluating estimator
     % for input in inputs:
     _model_inputs.${input} = new_inputs.${input};
     % endfor  
-
     % for estim_in in estim_outputs:
     _model_inputs.${estim_in} = new_inputs.${estim_in};
     % endfor
-
     % for parameter in parameters:
     _model_inputs.${parameter} = curr_params.${parameter};
     % endfor
-
     // Evaluate estimator 
     ${model}_model.setExternalInputs(&_model_inputs);
     ${model}_model.step();
     ${model}::ExtY_${model}_T outputs = ${model}_model.getExternalOutputs();
     auto msg_to_log = get_proto_msg(outputs);
-
     core::log(msg_to_log);
     return outputs;
 }
-
 core::ControllerOutput estimation::${model}_MatlabModel::step_controller(const core::VehicleState &in)
 {
     ${model}_inputs in_data = {};
-
     EstimatorOutputs_s estimator_outputs = {};
     if(_estim_manager)
     {
@@ -132,9 +107,7 @@ core::ControllerOutput estimation::${model}_MatlabModel::step_controller(const c
     cmd_out.out = type_set;
     auto& speed_out = std::get<core::SpeedControlOut>(cmd_out.out);
     speed_out = {};
-
     auto result = evaluate_estimator(in_data);
-
     speed_out.desired_rpms.FL = result.speed_setpoint_FL;
     speed_out.desired_rpms.FR = result.speed_setpoint_FR;
     speed_out.desired_rpms.RL = result.speed_setpoint_RL;
@@ -143,10 +116,6 @@ core::ControllerOutput estimation::${model}_MatlabModel::step_controller(const c
     speed_out.torque_lim_nm.FR = result.torq_FR;
     speed_out.torque_lim_nm.RL = result.torq_RL;
     speed_out.torque_lim_nm.RR = result.torq_RR;
-
     cmd_out.out = speed_out;
-
     return cmd_out;
 }
-
-
