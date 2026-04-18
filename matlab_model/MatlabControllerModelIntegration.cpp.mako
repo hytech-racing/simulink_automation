@@ -1,7 +1,7 @@
 #include "${model}.h"
 #include "${model}_MatlabModel.hpp"
 
-void estimation::${model}_MatlabModel::handle_parameter_updates(const std::unordered_map<std::string, foxglove::Parameter> &new_param_map) 
+void estimation::${model}_MatlabModel::handle_parameter_updates(const std::unordered_map<std::string, core::DBParam> &new_param_map) 
 {
     % for parameter in parameters:
     if (auto pval = std::get_if<${parameters[parameter]}>(&new_param_map.at("${parameter}"))) {
@@ -55,7 +55,7 @@ bool estimation::${model}_MatlabModel::init() {
 
     % if (len(parameters) > 0):
     % for parameter in parameters:
-    auto ${parameter} = core::FoxgloveServer::instance()::get_param("${parameter}");
+    auto ${parameter} = core::FoxgloveServer::instance().get_param<${parameters[parameter]}>("${parameter}");
     % endfor
 
     if (!(${format_params_check(parameters)})) {
@@ -67,13 +67,11 @@ bool estimation::${model}_MatlabModel::init() {
         _parameters = {
             ${format_parameter_derefencering(parameters)}
         };
-        param_update_handler_sig.connect(boost::bind(&${model}_MatlabModel::handle_parameter_updates, this, std::placeholders::_1));
-        set_configured();
+        core::FoxgloveServer::instance().register_param_callback(std::bind(&${model}_MatlabModel::handle_parameter_updates, this, std::placeholders::_1));
         return true;
     }
 
     % else:
-    set_configured();
     return true;
     % endif
 

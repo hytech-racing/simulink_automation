@@ -1,14 +1,16 @@
 #ifndef __${model.upper()}_MATLABESTIMMODEL_H__
 #define __${model.upper()}_MATLABESTIMMODEL_H__
 
-#include <VehicleDataTypes.hpp>
+#include <StateTracker.hpp>
 #include <Estimator.hpp>
+#include <Telemetry.hpp>
 
 #include <google/protobuf/message.h>
 
 #include <unordered_map>
 #include <mutex> 
 #include <memory>
+#include <FoxgloveServer.hpp>
 
 #include "${model}.h"
 #include "${model}_estimation_msgs.pb.h"
@@ -34,7 +36,7 @@ namespace estimation
     };
 
     class ${model}_MatlabEstimModel : public MatlabEstimModel,
-                                      public Estimator<${model}_output_t, core::VehicleState>{
+                                      public Estimator<${model}_output_t, core::VehicleState> {
 
         public:
 
@@ -44,11 +46,11 @@ namespace estimation
                 % endfor
             };
             float get_dt_sec() {return 0.004; }
-            bool init() override final;
+            bool init();
 
             ${model}_MatlabEstimModel();
 
-            void handle_parameter_updates(const std::unordered_map<std::string, foxglove::Parameter> &new_param_map);
+            void handle_parameter_updates(const std::unordered_map<std::string, core::DBParam> &new_param_map);
 
             std::shared_ptr<${model}_estimation_msgs::${model}_Outports> get_proto_msg(${model}::ExtY_${model}_T res);
 

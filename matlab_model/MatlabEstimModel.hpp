@@ -1,8 +1,6 @@
 #ifndef __MATLABESTIMMODEL_H__
 #define __MATLABESTIMMODEL_H__
-#include <VehicleDataTypes.hpp>
-#include <Configurable.hpp>
-#include <Loggable.hpp>
+#include <StateTracker.hpp>
 
 #include <google/protobuf/message.h>
 

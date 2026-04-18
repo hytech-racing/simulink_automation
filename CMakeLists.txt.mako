@@ -19,9 +19,9 @@ def format_libraries(libraries):
       library_names.append(library['name'])
     return " ".join(library_names)
 %>
-# Loop over libraries to create shared libraries and set up install rules
+
 % for library in libraries:
-add_library(${library['name']} SHARED
+add_library(${library['name']} 
     ${format_sources(library['sources'])}
 )
 
@@ -29,15 +29,10 @@ target_include_directories(${library['name']} PUBLIC
     <%text>$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/</%text>${library['name']}/include>
     <%text>$<INSTALL_INTERFACE</%text>:${library['name']}/include>
 )
-
-install(
-    DIRECTORY ${library['name']}/include/
-    DESTINATION ${library['name']}/include
-)
 % endfor
 
 # State estimation header library
-add_library(matlab_model SHARED
+add_library(matlab_model
 % for library in libraries:
     matlab_model/src/${library['name']}_MatlabModel.cpp
 % endfor
@@ -55,38 +50,3 @@ target_link_libraries(matlab_model PUBLIC
     protobuf::libprotobuf
     simulink_automation_msgs_proto_cpp
 )
-
-install(
-    TARGETS ${format_libraries(libraries)} matlab_model
-<%text>    EXPORT codegenTargets
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}</%text>
-)
-
-install(
-    DIRECTORY matlab_model/include/
-    DESTINATION matlab_model/include
-)
-
-<%text>
-# Install target export
-install(EXPORT codegenTargets
-  FILE codegenTargets.cmake
-  NAMESPACE codegen::  
-  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/codegen
-)
-
-# Configure package configuration file
-include(CMakePackageConfigHelpers)
-configure_package_config_file(${CMAKE_CURRENT_LIST_DIR}/cmake/codegenConfig.cmake.in
-  "${CMAKE_CURRENT_BINARY_DIR}/codegenConfig.cmake"
-  INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/codegen
-)
-
-install(FILES
-  "${CMAKE_CURRENT_BINARY_DIR}/codegenConfig.cmake"
-  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/codegen
-)
-</%text>
-

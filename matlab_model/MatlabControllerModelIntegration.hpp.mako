@@ -1,7 +1,9 @@
 #ifndef __${model.upper()}_MATLABMODEL_H__
 #define __${model.upper()}_MATLABMODEL_H__
 
-#include <VehicleDataTypes.hpp>
+#include <StateTracker.hpp>
+#include <FoxgloveServer.hpp>
+#include <Telemetry.hpp>
 
 #include <google/protobuf/message.h>
 
@@ -16,7 +18,6 @@
 #include "EstimatorManager.hpp"
 
 #include <MatlabModel.hpp>
-
 
 namespace estimation
 {
@@ -38,11 +39,11 @@ namespace estimation
                 ${parameters[parameter]} ${parameter};
                 % endfor
             };
-            bool init() override final;
+            bool init();
 
             ${model}_MatlabModel(std::shared_ptr<estimation::EstimatorManager> estim_manager);
 
-            void handle_parameter_updates(const std::unordered_map<std::string, foxglove::Parameter> &new_param_map);
+            void handle_parameter_updates(const std::unordered_map<std::string, core::DBParam> &new_param_map);
 
             std::shared_ptr<${model}_estimation_msgs::${model}_Outports> get_proto_msg(${model}::ExtY_${model}_T res);
 

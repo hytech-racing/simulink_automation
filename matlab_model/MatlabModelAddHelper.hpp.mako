@@ -20,11 +20,11 @@
 namespace matlab_model_gen
 {
 
-std::vector<std::shared_ptr<MatlabModel>> create_controllers(std::shared_ptr<estimation::EstimatorManager> estim_manager)
+inline std::vector<std::shared_ptr<MatlabModel>> create_controllers(std::shared_ptr<estimation::EstimatorManager> estim_manager)
 {
     std::vector<std::shared_ptr<MatlabModel>> vec{};
     % for i, model in enumerate(controller_model_names):
-    auto ${model}_controller_inst = std::make_shared<estimation::${model}_MatlabModel>();
+    auto ${model}_controller_inst = std::make_shared<estimation::${model}_MatlabModel>(estim_manager);
     if (!${model}_controller_inst->init()) {
         throw std::runtime_error("Failed to ${model}_MatlabModel controller");
     }
@@ -35,7 +35,7 @@ std::vector<std::shared_ptr<MatlabModel>> create_controllers(std::shared_ptr<est
 
 const size_t num_controllers = ${num_controller_models};
 
-std::vector<std::string> get_proto_filenames()
+inline std::vector<std::string> get_proto_filenames()
 {
     std::vector<std::string> names;
     % for model_class in all_model_names:

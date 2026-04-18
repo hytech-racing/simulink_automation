@@ -6,12 +6,9 @@
 
 #include <google/protobuf/message.h>
 
-#include <VehicleDataTypes.hpp>
+#include <StateTracker.hpp>
 
 #include "EstimatorOutputs.hpp"
-
-#include <Configurable.hpp>
-#include <Loggable.hpp>
 
 % for estim in estimator_names:
 #include "${estim}_MatlabModel.hpp"

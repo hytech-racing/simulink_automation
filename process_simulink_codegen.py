@@ -7,6 +7,7 @@ from mako.lookup import TemplateLookup
 from pathlib import Path
 import shutil
 import json_to_proto
+import posixpath
 
 # PREFACE:
 # This is not maintainable. this is a hack. i do not care. append if you dare, refactor if you must.
@@ -67,7 +68,7 @@ def unzip_and_rename(zip_path, output_dir):
         print(f"Error: '{zip_path}' does not exist.")
         return None
 
-    extraction_path = os.path.join(output_dir, Path(zip_path).stem)
+    extraction_path = posixpath.join(output_dir, Path(zip_path).stem)
     os.makedirs(extraction_path, exist_ok=True)  # Ensure the extraction directory exists
 
     with zipfile.ZipFile(zip_path, 'r') as zip_ref:
@@ -80,7 +81,7 @@ def remove_specific_files(directory, filenames):
     for root, dirs, files in os.walk(directory):
         for filename in filenames:
             if filename in files:
-                os.remove(os.path.join(root, filename))
+                os.remove(posixpath.join(root, filename))
                 print(f"Removed '{filename}' from '{root}'")
 
 def list_directories(base_path):
@@ -92,8 +93,8 @@ def list_directories(base_path):
     return directories
 
 def organize_files(base_path):
-    src_path = os.path.join(base_path, 'src')
-    include_path = os.path.join(base_path, 'include')
+    src_path = posixpath.join(base_path, 'src')
+    include_path = posixpath.join(base_path, 'include')
 
     os.makedirs(src_path, exist_ok=True)
     os.makedirs(include_path, exist_ok=True)
@@ -101,21 +102,21 @@ def organize_files(base_path):
     for root, _, files in os.walk(base_path):
         for file in files:
             if file.endswith('.cpp'):
-                new_location = os.path.join(src_path, file)
-                os.rename(os.path.join(root, file), new_location)
+                new_location = posixpath.join(src_path, file)
+                os.rename(posixpath.join(root, file), new_location)
                 print(f"Moved '{file}' to 'src/'")
             elif file.endswith('.h'):
-                new_location = os.path.join(include_path, file)
-                os.rename(os.path.join(root, file), new_location)
+                new_location = posixpath.join(include_path, file)
+                os.rename(posixpath.join(root, file), new_location)
                 print(f"Moved '{file}' to 'include/'")
 
     for root, dirs, files in os.walk(base_path, topdown=False):
         for file in files:
             if not (file.endswith('.cpp') or file.endswith('.h')):
-                os.remove(os.path.join(root, file))
+                os.remove(posixpath.join(root, file))
                 print(f"Removed '{file}' from '{root}'")
         for dir in dirs:
-            dir_path = os.path.join(root, dir)
+            dir_path = posixpath.join(root, dir)
             try:
                 os.rmdir(dir_path)
                 print(f"Removed empty directory '{dir_path}'")
@@ -126,13 +127,14 @@ def format_sources(sources):
     return " ".join(sources)
 
 def remove_parent_directory(path):
-    return os.path.join(*path.split(os.sep)[2:])
+    p = Path(path)
+    return Path(*p.parts[2:]).as_posix()
 
 def generate_cmakelists(libraries, output_dir):
     template = Template(filename='CMakeLists.txt.mako')
     rendered = template.render(libraries=libraries)
 
-    cmake_file_path = os.path.join(output_dir, 'CMakeLists.txt')
+    cmake_file_path = posixpath.join(output_dir, 'CMakeLists.txt')
     with open(cmake_file_path, 'w') as f:
         f.write(rendered)
     
@@ -141,7 +143,7 @@ def generate_cmakelists(libraries, output_dir):
 def generate_matlab_model_proto_reg_helper(proto_file_names, output_dir):
     proto_reg_template = Template(filename='matlab_model/MatlabModelProtoRegHelper.hpp.mako')
     rendered_reg_templt = proto_reg_template.render(proto_file_names = proto_file_names)
-    proto_reg_helper = os.path.join(output_dir, 'MatlabModelProtoRegHelper.hpp')
+    proto_reg_helper = posixpath.join(output_dir, 'MatlabModelProtoRegHelper.hpp')
     with open(proto_reg_helper, 'w') as f:
         f.write(rendered_reg_templt)
 
@@ -202,12 +204,12 @@ def generate_model_integration(template_lookup, model_type, model, parameters, i
         model=model, parameters=parameters, inputs=inputs, outports=outports, estim_outputs=estim_inputs
     )
 
-    integration_header_fpath = os.path.join(output_include,file_name+'.hpp')
+    integration_header_fpath = posixpath.join(output_include,file_name+'.hpp')
     with open(integration_header_fpath, 'w') as f:
         f.write(header_rendered)
     print(f"{file_name}.hpp generated at '{integration_header_fpath}'.")
 
-    integration_src_fpath = os.path.join(output_src, file_name + ".cpp")
+    integration_src_fpath = posixpath.join(output_src, file_name + ".cpp")
     with open(integration_src_fpath, 'w') as f:
         f.write(src_rendered)
     print(f"{file_name}.cpp generated at '{integration_src_fpath}'.")
@@ -215,13 +217,13 @@ def generate_model_integration(template_lookup, model_type, model, parameters, i
 def generate_matlab_model_add_helper(controller_model_names, all_model_names, output_dir):
     model_add_temp = Template(filename='matlab_model/MatlabModelAddHelper.hpp.mako')
     rendered_reg_templt = model_add_temp.render(num_controller_models=len(controller_model_names), controller_model_names=controller_model_names, all_model_names=all_model_names)
-    proto_reg_helper = os.path.join(output_dir, 'MatlabModelAddHelper.hpp')
+    proto_reg_helper = posixpath.join(output_dir, 'MatlabModelAddHelper.hpp')
     with open(proto_reg_helper, 'w') as f:
         f.write(rendered_reg_templt)
 
 def makes_codegen_libs(files, output_directory):
     libraries = []  # Store library info for CMake
-    cpp_lib_output_dir = os.path.join(output_directory, 'source_code')
+    cpp_lib_output_dir = posixpath.join(output_directory, 'source_code')
 
     for file in files:
         extraction_path = unzip_and_rename(file, cpp_lib_output_dir)
@@ -235,8 +237,8 @@ def makes_codegen_libs(files, output_directory):
             sources = []
             # for dir in directories:
                 # Assuming that .cpp files are in the src directory
-            src_dir = os.path.join(extraction_path, 'src')
-            sources_to_ext = (remove_parent_directory(os.path.join(src_dir, f)) for f in os.listdir(src_dir) if f.endswith('.cpp'))
+            src_dir = posixpath.join(extraction_path, 'src')
+            sources_to_ext = (remove_parent_directory(posixpath.join(src_dir, f)) for f in os.listdir(src_dir) if f.endswith('.cpp'))
             sources.extend(sources_to_ext)
             libraries.append({"name": library_name, "sources": sources})
         else:
@@ -248,14 +250,14 @@ def generate_estimator_integration(estimator_names, model_output_dict, output_di
 
     estim_int = Template(filename='matlab_model/EstimatorManager.hpp.mako')
     rendered_estim_int = estim_int.render(estimator_names=estimator_names, model_output_dict=model_output_dict)
-    estim_int_file_out = os.path.join(output_dir, 'EstimatorManager.hpp')
+    estim_int_file_out = posixpath.join(output_dir, 'EstimatorManager.hpp')
     with open(estim_int_file_out, 'w') as f:
         f.write(rendered_estim_int)
         
     estim_output_types = Template(filename='matlab_model/EstimatorOutputs.hpp.mako')
     rend_est_out = estim_output_types.render(model_outputs=model_output_dict)
     
-    estim_file_out = os.path.join(output_dir, 'EstimatorOutputs.hpp')
+    estim_file_out = posixpath.join(output_dir, 'EstimatorOutputs.hpp')
     with open(estim_file_out, 'w') as f:
         f.write(rend_est_out)
 
@@ -265,7 +267,7 @@ def add_cmake_to_proto_output(output_directory, all_model_names):
     cmake_template = Template(filename=cmake_template_path)
 
     rendered_cmake_template = cmake_template.render(all_model_names=all_model_names)
-    cmake_lists_loc = os.path.join(output_directory, 'CMakeLists.txt')
+    cmake_lists_loc = posixpath.join(output_directory, 'CMakeLists.txt')
     with open(cmake_lists_loc, 'w') as f:
         f.write(rendered_cmake_template)
     
@@ -286,7 +288,7 @@ if __name__ == "__main__":
     print(libraries)
     # Generate the CMakeLists.txt with the collected libraries
     generate_cmakelists(libraries, cpp_lib_output_dir)
-    copy_directory('cmake/', os.path.join(cpp_lib_output_dir, 'cmake'))
+    copy_directory('cmake/', posixpath.join(cpp_lib_output_dir, 'cmake'))
 
     # Generate and move state estimation files
     gend_include_dir = cpp_lib_output_dir + "/matlab_model/include"
