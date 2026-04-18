@@ -47,21 +47,19 @@ def format_parameter_derefencering(parameters):
     return frm
 %>
 
+
 bool estimation::${model}_MatlabModel::init() {
     
     if(!_estim_manager) {
         return false;
     }
-
     % if (len(parameters) > 0):
     % for parameter in parameters:
     auto ${parameter} = core::FoxgloveServer::instance().get_param<${parameters[parameter]}>("${parameter}");
     % endfor
-
     if (!(${format_params_check(parameters)})) {
         return false;
     }
-
     {
         std::unique_lock lk(_parameter_mutex);
         _parameters = {
@@ -70,11 +68,21 @@ bool estimation::${model}_MatlabModel::init() {
         core::FoxgloveServer::instance().register_param_callback(std::bind(&${model}_MatlabModel::handle_parameter_updates, this, std::placeholders::_1));
         return true;
     }
-
     % else:
     return true;
     % endif
+}
 
+void estimation::${model}_MatlabModel::handle_parameter_updates(const std::unordered_map<std::string, core::DBParam>& new_param_map) {
+    % if (len(parameters) > 0):
+    std::unique_lock lk(_parameter_mutex);
+
+    % for parameter in parameters:
+    if (auto v = get_from_param_map<${parameters[parameter]}>(new_param_map, "${parameter}")) {
+        _parameters.${parameter} = *v;
+    }
+    % endfor
+    % endif
 }
 
 ${model}::ExtY_${model}_T estimation::${model}_MatlabModel::evaluate_estimator(${model}_inputs &new_inputs) {
