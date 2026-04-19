@@ -16,13 +16,14 @@ function [zipFileName] = buildModel(modelName, Config)
         
         % Attach and activate it on the target model
         activeConfig = getActiveConfigSet(m);
-        activeConfig.Name
-        if(~strcmp(activeConfig.Name, 'hytech_codegen_config_r2'))
+        fprintf('active config name: %s\n', activeConfig.Name)
+        if(~strcmp(activeConfig.Name, 'hytech_codegen_config_no_halide'))
+            disp('Changing simulink config...')
             
             cfgClone = copy(Config);
-            attachConfigSet(m, cfgClone);  % true = make it active
+            attachConfigSet(m, cfgClone, true);  % true = make it active
             
-            setActiveConfigSet(m, 'hytech_codegen_config_r2');
+            setActiveConfigSet(m, 'hytech_codegen_config_no_halide');
             
             
             fprintf('attached config');
@@ -36,7 +37,9 @@ function [zipFileName] = buildModel(modelName, Config)
     
     % Build the model
     slbuild(modelName)
-    codeInfoPath = fullfile(pwd, [modelName, '_ert_rtw', filesep, 'codeInfo.mat']); % Adjust the path as needed
+    simulink_cfg = Simulink.fileGenControl('getConfig');
+    code_gen_folder = simulink_cfg.CodeGenFolder;
+    codeInfoPath = fullfile(code_gen_folder, [modelName, '_ert_rtw', filesep, 'codeInfo.mat']); % Adjust the path as needed
 
     if exist(codeInfoPath, 'file')
         codeInfo = load(codeInfoPath);
@@ -51,6 +54,9 @@ function [zipFileName] = buildModel(modelName, Config)
     [inports_struct, outports_struct] = associateInportWithStructMemberNames(codeInfo.codeInfo, areas);
 
     inportInfoJsonName = strcat(modelName, '_inport_info.json');
+
+    inportInfoJsonName = fullfile(code_gen_folder, inportInfoJsonName);
+
     ifid = fopen(inportInfoJsonName, 'w');
 
     if ifid == -1
