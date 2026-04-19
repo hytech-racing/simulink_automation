@@ -5,7 +5,7 @@ rootFolder = pwd;  % Get the current folder
 addpath(genpath(rootFolder));  % Add all sub-folders
 
 % HT09_Vehicle_Parameters;
-HT09_MBD_Vehicle_Parameters;
+% HT09_MBD_Vehicle_Parameters;
 load_params;
     
 %%
