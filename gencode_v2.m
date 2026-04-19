@@ -7,6 +7,7 @@ addpath(genpath(rootFolder));  % Add all sub-folders
 % HT09_Vehicle_Parameters;
 % HT09_MBD_Vehicle_Parameters;
 load_params;
+load_ekf_params;
     
 %%
 fname = 'models.json';
