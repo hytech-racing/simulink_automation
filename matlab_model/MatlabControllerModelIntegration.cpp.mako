@@ -40,7 +40,7 @@ bool estimation::${model}_MatlabModel::init() {
     }
     % if (len(parameters) > 0):
     % for parameter in parameters:
-    auto ${parameter} = core::FoxgloveServer::instance().get_param<${parameters[parameter]}>("${parameter}");
+    auto ${parameter} = core::FoxgloveServer::instance().get_param<${parameters[parameter]}>("qp_torq_allocator_matlabModel/${parameter.lower()}");
     % endfor
     if (!(${format_params_check(parameters)})) {
         return false;
@@ -61,7 +61,7 @@ void estimation::${model}_MatlabModel::handle_parameter_updates(const std::unord
     % if (len(parameters) > 0):
     std::unique_lock lk(_parameter_mutex);
     % for parameter in parameters:
-    if (auto pval = std::get_if<${parameters[parameter]}>(&new_param_map.at("${parameter.lower()}"))) {
+    if (auto pval = std::get_if<${parameters[parameter]}>(&new_param_map.at("qp_torq_allocator_matlabModel/${parameter.lower()}"))) {
         _parameters.${parameter} = *pval;
     }
     % endfor

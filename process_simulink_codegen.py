@@ -16,8 +16,8 @@ import posixpath
 from enum import Enum
 
 class ModelType(Enum):
-    CONTROLLER = "controller"
-    ESTIMATOR = "estimator"
+    CONTROLLER = "htx_controller"
+    ESTIMATOR = "htx_estimator"
 
 def copy_directory(src, dest):
     """
