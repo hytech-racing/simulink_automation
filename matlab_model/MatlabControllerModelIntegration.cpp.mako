@@ -61,9 +61,12 @@ void estimation::${model}_MatlabModel::handle_parameter_updates(const std::unord
     % if (len(parameters) > 0):
     std::unique_lock lk(_parameter_mutex);
     % for parameter in parameters:
-    if (auto pval = std::get_if<${parameters[parameter]}>(&new_param_map.at("qp_torq_allocator_matlabModel/${parameter.lower()}"))) {
-        _parameters.${parameter} = *pval;
-    }
+        if (auto it = new_param_map.find("qp_torq_allocator_matlabModel/${parameter.lower()}"); it != new_param_map.end()) {
+            if (auto pval = std::get_if<${parameters[parameter]}>(&it->second)) {
+                std::unique_lock lk(_parameter_mutex);
+                _parameters.${parameter} = *pval;
+            }
+        }
     % endfor
     % endif
 }
