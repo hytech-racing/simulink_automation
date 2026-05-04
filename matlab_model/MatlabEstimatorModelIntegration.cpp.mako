@@ -66,7 +66,8 @@ void estimation::${model}_MatlabEstimModel::handle_parameter_updates(const std::
         }
     % endfor
     % endif
-}${model}::ExtY_${model}_T estimation::${model}_MatlabEstimModel::evaluate_estimator(${model}_inputs &new_inputs) {
+}
+${model}::ExtY_${model}_T estimation::${model}_MatlabEstimModel::evaluate_estimator(${model}_inputs &new_inputs) {
     parameters curr_params;
     {
         std::unique_lock lk(_parameter_mutex);
