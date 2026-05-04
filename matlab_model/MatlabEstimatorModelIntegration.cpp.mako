@@ -56,7 +56,6 @@ bool estimation::${model}_MatlabEstimModel::init() {
 }
 void estimation::${model}_MatlabEstimModel::handle_parameter_updates(const std::unordered_map<std::string, core::DBParam>& new_param_map) {
     % if (len(parameters) > 0):
-    std::unique_lock lk(_parameter_mutex);
     % for parameter in parameters:
         if (auto it = new_param_map.find("estimator_matlabestimmodel/${parameter.lower()}"); it != new_param_map.end()) {
             if (auto pval = std::get_if<${parameters[parameter]}>(&it->second)) {
